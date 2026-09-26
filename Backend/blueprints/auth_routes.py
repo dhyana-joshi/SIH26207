@@ -87,7 +87,7 @@ def student_signup():
         set_user_session(student_id, 'student', email, name)
 
         return jsonify({
-            'message': 'Student registered and logged in successfully!',
+            'message': f'Welcome to VidyaSarthi, {name}!',
             'user': {
                 'id': student_id,
                 'name': name,
@@ -165,8 +165,14 @@ def student_login():
 
     print(f"[AUTH LOGIN SUCCESS] Logged in: {student['name']} ({email})")
     set_user_session(student['id'], 'student', student['email'], student['name'])
+
+    # Check if first-time user (curriculum intake pending)
+    student_dict = dict(student)
+    is_first_time = not (student_dict.get('class_year') and student_dict.get('curriculum'))
+    welcome_msg = f"Welcome to VidyaSarthi, {student['name']}!" if is_first_time else f"Welcome back, {student['name']}!"
+
     return jsonify({
-        'message': f"Welcome back, {student['name']}!",
+        'message': welcome_msg,
         'user': {
             'id': student['id'],
             'name': student['name'],

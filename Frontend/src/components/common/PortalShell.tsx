@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from './Icon';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage, SupportedLanguage } from '../../context/LanguageContext';
 import { authApi } from '../../api/auth';
 import { NotificationItem } from '../../types';
 
@@ -41,6 +42,55 @@ export const PortalShell: React.FC<PortalShellProps> = ({
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loadingNotifs, setLoadingNotifs] = useState(false);
   const { currentUser, logout } = useAuth();
+  const { language, setLanguage, t, languages } = useLanguage();
+
+  const getPortalLabel = () => {
+    if (portalKey === 'student') return t('nav.student_portal', 'Student Portal');
+    if (portalKey === 'institute') return t('nav.institute_portal', 'Institute Portal');
+    if (portalKey === 'academician') return t('nav.academician_portal', 'Academician Portal');
+    return `${PORTAL_META[portalKey]?.label || portalKey} Portal`;
+  };
+
+  const getTabLabel = (tab: PortalTab) => {
+    const map: Record<string, string> = {
+      // Student Tabs
+      overview: 'tab.overview',
+      pathways: 'tab.pathways',
+      syllabus: 'tab.syllabus',
+      schedule: 'tab.schedule',
+      practice: 'tab.practice',
+      practice_tests: 'tab.practice',
+      learning: 'tab.learning',
+      visual_learning: 'tab.learning',
+      mentoring: 'tab.mentoring',
+      student_mentoring: 'tab.mentoring',
+      research: 'tab.research',
+      research_papers: 'tab.research',
+      opportunities: 'tab.opportunities',
+      profile: 'tab.profile',
+      knowledge_gaps: 'tab.knowledge_gaps',
+      backlogs: 'tab.backlogs',
+
+      // Institute Tabs
+      students: 'tab.students',
+      institute_students: 'tab.students',
+      marks: 'tab.marks',
+      institute_marks: 'tab.marks',
+      schedules: 'tab.schedule',
+      analytics: 'tab.analytics',
+      verifications: 'tab.verifications',
+      opportunities_manage: 'tab.opportunities',
+
+      // Academician Tabs
+      publish: 'tab.publish',
+      publish_paper: 'tab.publish',
+      papers: 'tab.papers',
+      my_papers: 'tab.papers',
+      discuss: 'tab.discuss',
+      student_inquiries: 'tab.discuss',
+    };
+    return map[tab.key] ? t(map[tab.key], tab.label) : tab.label;
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -96,11 +146,26 @@ export const PortalShell: React.FC<PortalShellProps> = ({
             VidyaSarthi
           </button>
           <span className="hidden sm:inline text-pcream/50">/</span>
-          <span className="hidden sm:inline text-sm font-medium text-pcream/85">{meta.label} Portal</span>
+          <span className="hidden sm:inline text-sm font-medium text-pcream/85">{getPortalLabel()}</span>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            {/* Note: In accordance with Rule 5, when a user is logged in, other portal tabs are STRICTLY hidden. */}
-            
+            {/* Global Language Selector */}
+            <div className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 px-2.5 py-1 rounded-xl text-xs border border-white/20 transition">
+              <span className="text-sm">🌐</span>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}
+                className="bg-transparent text-pcream text-xs font-semibold focus:outline-none cursor-pointer pr-1"
+                aria-label="Select Language"
+              >
+                {languages.map((l) => (
+                  <option key={l.code} value={l.code} className="text-slate-900 bg-white">
+                    {l.nativeName} ({l.name})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {currentUser && (
               <button
                 onClick={async () => {
@@ -110,7 +175,7 @@ export const PortalShell: React.FC<PortalShellProps> = ({
                 }}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 text-pcream hover:bg-rose-700/80 transition"
               >
-                Sign out
+                {t('nav.sign_out', 'Sign out')}
               </button>
             )}
 
@@ -241,7 +306,7 @@ export const PortalShell: React.FC<PortalShellProps> = ({
           }
         >
           <div className="px-2 py-3 mb-1">
-            <div className="text-xs font-semibold text-[#6B7660] uppercase tracking-wide">{meta.label} Portal</div>
+            <div className="text-xs font-semibold text-[#6B7660] uppercase tracking-wide">{getPortalLabel()}</div>
             {subtitle && <div className="text-[11px] text-[#8B9480] mt-0.5">{subtitle}</div>}
           </div>
           <nav className="space-y-1">
@@ -258,7 +323,7 @@ export const PortalShell: React.FC<PortalShellProps> = ({
                 }
               >
                 <Icon name={t.icon} className="w-4 h-4 shrink-0" />
-                {t.label}
+                {getTabLabel(t)}
               </button>
             ))}
           </nav>

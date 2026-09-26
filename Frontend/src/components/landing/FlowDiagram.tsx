@@ -7,13 +7,13 @@ interface FlowDiagramProps {
 export const FlowDiagram: React.FC<FlowDiagramProps> = ({ inverted = false }) => {
   const steps = ['Curriculum', 'Extra Skills', 'Assess', 'Practice', 'Research', 'Excel'];
   return (
-    <div className="w-full max-w-full overflow-hidden py-1">
+    <div className="w-full max-w-full overflow-hidden px-1 py-1">
       <div className="flex items-center justify-between w-full max-w-full">
         {steps.map((s, i) => (
           <Fragment key={s}>
             <div className="flex flex-col items-center shrink-0">
               <div
-                className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border flex items-center justify-center font-display text-xs xs:text-sm sm:text-base md:text-lg transition-transform ${
+                className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-full border flex items-center justify-center font-display text-xs sm:text-sm md:text-base transition-transform ${
                   inverted
                     ? 'bg-white/10 border-white/25 text-cream shadow-inner'
                     : 'bg-mutedsage/40 border-deepblue/15 text-deepblue'
@@ -22,7 +22,7 @@ export const FlowDiagram: React.FC<FlowDiagramProps> = ({ inverted = false }) =>
                 {i + 1}
               </div>
               <span
-                className={`text-[9px] xs:text-[10px] sm:text-xs md:text-sm font-semibold mt-1 sm:mt-1.5 text-center leading-tight ${
+                className={`text-[9px] sm:text-[10px] md:text-xs font-semibold mt-1 text-center leading-tight max-w-[58px] ${
                   inverted ? 'text-cream/80' : 'text-deepblue/80'
                 }`}
               >
@@ -31,7 +31,7 @@ export const FlowDiagram: React.FC<FlowDiagramProps> = ({ inverted = false }) =>
             </div>
             {i < steps.length - 1 && (
               <div
-                className={`flex-1 min-w-[6px] xs:min-w-[10px] sm:min-w-[16px] max-w-[48px] h-[2px] -mt-3 xs:-mt-3.5 sm:-mt-4 md:-mt-5 shrink transition-opacity ${
+                className={`flex-1 min-w-[4px] sm:min-w-[8px] max-w-[28px] h-[2px] -mt-3 sm:-mt-3.5 md:-mt-4 shrink transition-opacity ${
                   inverted
                     ? 'bg-gradient-to-r from-white/30 via-white/40 to-white/30'
                     : 'bg-gradient-to-r from-deepblue/25 via-deepblue/40 to-deepblue/25'

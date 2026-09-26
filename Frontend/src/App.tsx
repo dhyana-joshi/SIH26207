@@ -5,6 +5,7 @@ import { StudentPortal } from './components/student/StudentPortal';
 import { AcademicianPortal } from './components/academician/AcademicianPortal';
 import { InstitutePortal } from './components/institute/InstitutePortal';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { UserRole } from './types';
 import './App.css';
 
@@ -116,7 +117,9 @@ function MainContent() {
 export function App() {
   return (
     <AuthProvider>
-      <MainContent />
+      <LanguageProvider>
+        <MainContent />
+      </LanguageProvider>
     </AuthProvider>
   );
 }

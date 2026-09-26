@@ -14,6 +14,7 @@ import {
 import { Icon } from '../common/Icon';
 import { studentApi } from '../../api/student';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage, SupportedLanguage } from '../../context/LanguageContext';
 import {
   StudentLearningProfile,
   LearningPathway,
@@ -46,17 +47,21 @@ export const StudentIntakeModal: React.FC<{
   onSuccess: () => void;
   initialProfile?: StudentLearningProfile | null;
 }> = ({ isOpen, onClose, onSuccess, initialProfile }) => {
-  const [classYear, setClassYear] = useState(initialProfile?.academic_class || '3rd Year B.Tech');
-  const [curriculum, setCurriculum] = useState(initialProfile?.board_curriculum || 'Computer Science & Engineering');
-  const [selectedAcademic, setSelectedAcademic] = useState<string[]>([
-    'Mathematics', 'Data Structures & Algorithms', 'Operating Systems'
-  ]);
+  const [classYear, setClassYear] = useState(initialProfile?.academic_class || '');
+  const [curriculum, setCurriculum] = useState(initialProfile?.board_curriculum || '');
+  const [selectedAcademic, setSelectedAcademic] = useState<string[]>(
+    initialProfile?.academic_subjects_list && initialProfile.academic_subjects_list.length > 0
+      ? initialProfile.academic_subjects_list
+      : []
+  );
   const [customAcademic, setCustomAcademic] = useState('');
-  const [selectedExtra, setSelectedExtra] = useState<string[]>([
-    'Artificial Intelligence & Machine Learning', 'Web Development'
-  ]);
+  const [selectedExtra, setSelectedExtra] = useState<string[]>(
+    initialProfile?.additional_skills_list && initialProfile.additional_skills_list.length > 0
+      ? initialProfile.additional_skills_list
+      : []
+  );
   const [customExtra, setCustomExtra] = useState('');
-  const [sportsPreference, setSportsPreference] = useState('Cricket practice 4:30 PM - 5:30 PM daily');
+  const [sportsPreference, setSportsPreference] = useState('');
   const [preferredLanguage, setPreferredLanguage] = useState(initialProfile?.preferred_language || 'English');
   const [knowledgeLevel, setKnowledgeLevel] = useState(initialProfile?.knowledge_level || 'Intermediate');
   const [submitting, setSubmitting] = useState(false);
@@ -120,6 +125,14 @@ export const StudentIntakeModal: React.FC<{
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!classYear) {
+      alert('Please select your academic class/year.');
+      return;
+    }
+    if (!curriculum) {
+      alert('Please select your board or university curriculum.');
+      return;
+    }
     if (selectedAcademic.length === 0) {
       alert('Please select at least one core academic subject.');
       return;
@@ -156,12 +169,14 @@ export const StudentIntakeModal: React.FC<{
         {/* 1. Grade and Curriculum */}
         <div className="grid sm:grid-cols-2 gap-3">
           <div>
-            <label className="block font-semibold text-[#2C3524] mb-1">Academic Class / Year</label>
+            <label className="block font-semibold text-[#2C3524] mb-1">Academic Class / Year <span className="text-rose-600">*</span></label>
             <select
               value={classYear}
               onChange={(e) => setClassYear(e.target.value)}
+              required
               className="w-full p-2.5 rounded-xl border border-[#E1D6AE] bg-white text-xs text-[#2C3524] font-medium"
             >
+              <option value="">-- Select Class / Year --</option>
               {CLASS_OPTIONS.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -169,12 +184,14 @@ export const StudentIntakeModal: React.FC<{
           </div>
 
           <div>
-            <label className="block font-semibold text-[#2C3524] mb-1">Board / Curriculum</label>
+            <label className="block font-semibold text-[#2C3524] mb-1">Board / Curriculum <span className="text-rose-600">*</span></label>
             <select
               value={curriculum}
               onChange={(e) => setCurriculum(e.target.value)}
+              required
               className="w-full p-2.5 rounded-xl border border-[#E1D6AE] bg-white text-xs text-[#2C3524] font-medium"
             >
+              <option value="">-- Select Board / Curriculum --</option>
               {CURRICULUM_OPTIONS.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -342,6 +359,7 @@ export const UpcomingExamSyllabusGauge: React.FC<{
   daysRemaining = 19,
   pacingStatus = 'On Track'
 }) => {
+  const { t } = useLanguage();
   const cur = Math.max(0, Math.min(100, Math.round(currentPct * 10) / 10));
   const tgt = Math.max(1, Math.min(100, Math.round(targetPct * 10) / 10));
   const fractionOfTarget = Math.min(100, Math.round((cur / tgt) * 100));
@@ -356,10 +374,6 @@ export const UpcomingExamSyllabusGauge: React.FC<{
   const tgtX = cx + (r + 4) * Math.cos(tgtAngle);
   const tgtY = cy - (r + 4) * Math.sin(tgtAngle);
 
-  const curAngle = Math.PI * (1 - cur / 100);
-  const needleTipX = cx + (r - 12) * Math.cos(curAngle);
-  const needleTipY = cy - (r - 12) * Math.sin(curAngle);
-
   const isTargetAchieved = cur >= tgt;
   const toneColor = isTargetAchieved
     ? 'text-emerald-700 bg-emerald-100 border-emerald-300'
@@ -373,7 +387,7 @@ export const UpcomingExamSyllabusGauge: React.FC<{
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
           <h3 className="font-display font-bold text-sm text-[#2C3524]">
-            Exam Syllabus Target Meter
+            {t('meter.exam_target', 'Exam Syllabus Target Meter')}
           </h3>
         </div>
         <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${toneColor}`}>
@@ -418,17 +432,15 @@ export const UpcomingExamSyllabusGauge: React.FC<{
             {/* Target Marker Pin */}
             <circle cx={tgtX} cy={tgtY} r="4" fill="#313851" stroke="#FFFFFF" strokeWidth="1.5" />
 
-            {/* Needle Pivot & Arm */}
-            <circle cx={cx} cy={cy} r="5" fill="#2C3524" />
-            <line
-              x1={cx}
-              y1={cy}
-              x2={needleTipX}
-              y2={needleTipY}
-              stroke="#2C3524"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            {/* Sharp Precision Pointer Needle */}
+            <g transform={`rotate(${(cur / 100) * 180 - 90}, ${cx}, ${cy})`}>
+              <polygon
+                points={`${cx - 2.5},${cy} ${cx},${cy - 59} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
+                fill="#2C3524"
+              />
+              <circle cx={cx} cy={cy} r="5" fill="#2C3524" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx={cx} cy={cy} r="2" fill="#E07A5F" />
+            </g>
 
             <text x="24" y="90" fontSize="9" fill="#556248" fontWeight="bold">0%</text>
             <text x={tgtX - 10} y={tgtY - 8} fontSize="8" fill="#313851" fontWeight="bold">🎯{tgt}%</text>
@@ -488,6 +500,7 @@ export const SkillGrowthVelocityGauge: React.FC<{
   milestoneStage = 'Exam Ready & Proficient',
   milestones
 }) => {
+  const { t } = useLanguage();
   const cur = Math.max(0, Math.min(100, Math.round(currentPct * 10) / 10));
   const base = Math.max(0, Math.min(100, Math.round(baselinePct * 10) / 10));
   const delta = Math.max(0, Math.round(growthDelta * 10) / 10);
@@ -504,8 +517,6 @@ export const SkillGrowthVelocityGauge: React.FC<{
   const curAngle = Math.PI * (1 - cur / 100);
   const curX = cx + (r + 4) * Math.cos(curAngle);
   const curY = cy - (r + 4) * Math.sin(curAngle);
-  const needleTipX = cx + (r - 12) * Math.cos(curAngle);
-  const needleTipY = cy - (r - 12) * Math.sin(curAngle);
 
   const strokeOffset = arcLen * (1 - cur / 100);
 
@@ -524,11 +535,11 @@ export const SkillGrowthVelocityGauge: React.FC<{
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
           <h3 className="font-display font-bold text-sm text-[#2C3524]">
-            Skill Readiness & Growth Meter
+            {t('meter.skill_growth', 'Skill Readiness & Growth Meter')}
           </h3>
         </div>
         <span className="px-2 py-0.5 rounded text-[11px] font-bold border border-emerald-300 bg-emerald-100 text-emerald-800">
-          +{delta}% Distance Traveled
+          +{delta}% {t('meter.distance_traveled', 'Distance Traveled')}
         </span>
       </div>
 
@@ -571,17 +582,15 @@ export const SkillGrowthVelocityGauge: React.FC<{
             {/* Current Competency Tip */}
             <circle cx={curX} cy={curY} r="4.5" fill="#2A9D8F" stroke="#FFFFFF" strokeWidth="1.5" />
 
-            {/* Center Pivot & Needle */}
-            <circle cx={cx} cy={cy} r="5" fill="#2C3524" />
-            <line
-              x1={cx}
-              y1={cy}
-              x2={needleTipX}
-              y2={needleTipY}
-              stroke="#2C3524"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            {/* Sharp Precision Pointer Needle */}
+            <g transform={`rotate(${(cur / 100) * 180 - 90}, ${cx}, ${cy})`}>
+              <polygon
+                points={`${cx - 2.5},${cy} ${cx},${cy - 59} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
+                fill="#2C3524"
+              />
+              <circle cx={cx} cy={cy} r="5" fill="#2C3524" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx={cx} cy={cy} r="2" fill="#2A9D8F" />
+            </g>
 
             <text x="24" y="90" fontSize="9" fill="#556248" fontWeight="bold">0%</text>
             <text x={baseX - 10} y={baseY - 7} fontSize="8" fill="#E76F51" fontWeight="bold">🏁{base}%</text>
@@ -799,6 +808,7 @@ export const StudentOverview: React.FC<{
   onOpenDiagnostic: (subject: string) => void;
   onSelectPathway?: (subject: string) => void;
 }> = ({ onTabChange, onOpenPractice, onOpenDailyUpdate, onOpenDiagnostic, onSelectPathway }) => {
+  const { t } = useLanguage();
   const [profile, setProfile] = useState<StudentLearningProfile | null>(null);
   const [syllabusList, setSyllabusList] = useState<SyllabusProgressItem[]>([]);
   const [weakInfo, setWeakInfo] = useState<{ weak_subjects: any[]; recommendation: string } | null>(null);
@@ -898,13 +908,13 @@ export const StudentOverview: React.FC<{
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-xs font-bold uppercase tracking-wider">
-              <span>⚡</span> Action Required • Initial Profile Intake
+              <span>⚡</span> {t('greeting.action_required', 'Action Required • Initial Profile Intake')}
             </div>
             <h2 className="font-display text-lg font-bold text-amber-950">
-              Welcome to VidyaSarthi, {profile?.name || 'Student'}!
+              {t('greeting.welcome', 'Welcome to VidyaSarthi')}, {profile?.name || 'Student'}!
             </h2>
             <p className="text-xs text-amber-900/80 max-w-2xl leading-relaxed">
-              Your profile currently has no curriculum subjects enrolled. Complete your initial intake to select your grade/class, academic subjects, extra skills, and sports routine.
+              {t('greeting.intake_desc', 'Your profile currently has no curriculum subjects enrolled. Complete your initial intake to select your grade/class, academic subjects, extra skills, and sports routine.')}
             </p>
           </div>
           <Button
@@ -912,7 +922,7 @@ export const StudentOverview: React.FC<{
             className="bg-amber-600 hover:bg-amber-700 text-white font-bold shrink-0 shadow-sm"
             onClick={() => setShowIntakeModal(true)}
           >
-            Start Curriculum Intake →
+            {t('action.complete_intake', 'Complete Intake')} →
           </Button>
         </div>
       )}
@@ -929,12 +939,14 @@ export const StudentOverview: React.FC<{
             </span>
           </div>
           <h1 className="font-display text-2xl font-bold text-[#2C3524]">
-            {isFirstTime ? `Welcome to VidyaSarthi, ${profile?.name || 'Student'}!` : `Welcome back, ${profile?.name || 'Student'}!`}
+            {isFirstTime
+              ? `${t('greeting.welcome', 'Welcome to VidyaSarthi')}, ${profile?.name || 'Student'}!`
+              : `${t('greeting.welcome_back', 'Welcome back')}, ${profile?.name || 'Student'}!`}
           </h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             {isFirstTime
-              ? 'Complete your initial curriculum intake below to calibrate your dual-track syllabus, AI timetable, and diagnostic tests.'
-              : 'Dual-track academic & skill dashboard. You are on track for upcoming mid-terms.'}
+              ? t('greeting.intake_desc', 'Complete your initial curriculum intake below to calibrate your dual-track syllabus, AI timetable, and diagnostic tests.')
+              : t('greeting.dual_track_desc', 'Dual-track academic & skill dashboard. You are on track for upcoming mid-terms.')}
           </p>
         </div>
 
@@ -942,17 +954,17 @@ export const StudentOverview: React.FC<{
           {isFirstTime ? (
             <Button variant="primary" onClick={() => setShowIntakeModal(true)}>
               <Icon name="pencil" className="w-4 h-4 mr-1.5" />
-              Complete Intake
+              {t('action.complete_intake', 'Complete Intake')}
             </Button>
           ) : (
             <>
               <Button variant="outline" onClick={onOpenDailyUpdate}>
                 <Icon name="pencil" className="w-4 h-4 mr-1.5" />
-                Log Today's Topics
+                {t('action.daily_update', "Log Today's Topics")}
               </Button>
               <Button variant="primary" onClick={() => onOpenPractice()}>
                 <Icon name="target" className="w-4 h-4 mr-1.5" />
-                Today's Practice Test
+                {t('action.today_quiz', "Today's Practice Test")}
               </Button>
             </>
           )}
@@ -962,25 +974,25 @@ export const StudentOverview: React.FC<{
       {/* Key Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatBlock
-          label="Overall Fit Score (Exam Readiness)"
+          label={t('meter.overall_fit', 'Overall Fit Score (Exam Readiness)')}
           value={isFirstTime ? '0%' : `${avgFitScore}%`}
           change={isFirstTime ? 'Intake Pending' : fitBadge.label}
           tone={isFirstTime ? 'amber' : fitBadge.tone}
         />
         <StatBlock
-          label="Syllabus Completed"
+          label={t('meter.syllabus_covered', 'Syllabus Completed')}
           value={isFirstTime ? '0%' : `${avgSyllabusProgress}%`}
           change={isFirstTime ? 'No subjects enrolled' : 'Across all enrolled subjects'}
           tone={isFirstTime ? 'amber' : 'default'}
         />
         <StatBlock
-          label="Educational Potential Index"
+          label={t('meter.potential_index', 'Educational Potential Index')}
           value={isFirstTime ? '0 / 100' : `${potentialScore} / 100`}
           change={isFirstTime ? 'Pending Assessment' : potentialTier}
           tone={isFirstTime ? 'amber' : 'sage'}
         />
         <StatBlock
-          label="Daily Progress Rate"
+          label={t('meter.progress_rate', 'Daily Progress Rate')}
           value={isFirstTime ? '+0.0%/day' : `+${progressRate}%/day`}
           change={isFirstTime ? 'Pending Activity' : 'Target: +1.5%/day'}
           tone={isFirstTime ? 'amber' : 'sage'}
@@ -4538,8 +4550,52 @@ export const PracticeTestModal: React.FC<{
 // =========================================================================
 
 export const StudentLearningView: React.FC = () => {
-  const [selectedLang, setSelectedLang] = useState('English');
+  const { language, setLanguage } = useLanguage();
+  const [selectedLang, setSelectedLang] = useState<string>(() => {
+    const langMap: Record<SupportedLanguage, string> = {
+      en: 'English',
+      hi: 'Hindi',
+      gu: 'Gujarati',
+      mr: 'Marathi',
+      ta: 'Tamil',
+      te: 'Telugu',
+      bn: 'Bengali'
+    };
+    return langMap[language] || 'English';
+  });
   const [activeTab, setActiveTab] = useState<'calculus' | 'matrix' | 'algorithms' | 'multilingual'>('calculus');
+
+  // Sync with global language changes
+  useEffect(() => {
+    const langMap: Record<SupportedLanguage, string> = {
+      en: 'English',
+      hi: 'Hindi',
+      gu: 'Gujarati',
+      mr: 'Marathi',
+      ta: 'Tamil',
+      te: 'Telugu',
+      bn: 'Bengali'
+    };
+    if (langMap[language] && langMap[language] !== selectedLang) {
+      setSelectedLang(langMap[language]);
+    }
+  }, [language]);
+
+  const handleLanguageChange = (langName: string) => {
+    setSelectedLang(langName);
+    const codeMap: Record<string, SupportedLanguage> = {
+      'English': 'en',
+      'Hindi': 'hi',
+      'Gujarati': 'gu',
+      'Marathi': 'mr',
+      'Tamil': 'ta',
+      'Telugu': 'te',
+      'Bengali': 'bn'
+    };
+    if (codeMap[langName]) {
+      setLanguage(codeMap[langName]);
+    }
+  };
 
   // 1. Calculus State
   const [calcFunc, setCalcFunc] = useState<'poly' | 'trig' | 'cubic'>('poly');
@@ -4565,75 +4621,81 @@ export const StudentLearningView: React.FC = () => {
   const [cacheKeyInput, setCacheKeyInput] = useState('');
   const [cacheValInput, setCacheValInput] = useState('');
 
-  // Calculus Calculations
+  // Calculus Calculations (Bounded to [-4.5, 4.5] range to prevent SVG overflow)
   let fx = 0;
   let dfx = 0;
   let integral = 0;
   let funcLabel = '';
   let derivLabel = '';
 
+  const evalFunc = (x: number) => {
+    if (calcFunc === 'poly') return 0.5 * x * x - 2;
+    if (calcFunc === 'trig') return 2.5 * Math.sin(x);
+    return 0.2 * Math.pow(x, 3) - x;
+  };
+
   if (calcFunc === 'poly') {
-    // f(x) = x^2 - 4x + 3
-    funcLabel = 'f(x) = x² - 4x + 3';
-    derivLabel = "f'(x) = 2x - 4";
-    fx = x0 * x0 - 4 * x0 + 3;
-    dfx = 2 * x0 - 4;
-    integral = (Math.pow(x0, 3) / 3) - 2 * Math.pow(x0, 2) + 3 * x0;
+    funcLabel = 'f(x) = 0.5x² - 2';
+    derivLabel = "f'(x) = x";
+    fx = evalFunc(x0);
+    dfx = x0;
+    integral = (0.5 * Math.pow(x0, 3) / 3) - 2 * x0;
   } else if (calcFunc === 'trig') {
-    // f(x) = sin(x)
-    funcLabel = 'f(x) = sin(x)';
-    derivLabel = "f'(x) = cos(x)";
-    fx = Math.sin(x0);
-    dfx = Math.cos(x0);
-    integral = 1 - Math.cos(x0);
+    funcLabel = 'f(x) = 2.5 sin(x)';
+    derivLabel = "f'(x) = 2.5 cos(x)";
+    fx = evalFunc(x0);
+    dfx = 2.5 * Math.cos(x0);
+    integral = 2.5 * (1 - Math.cos(x0));
   } else {
-    // f(x) = x^3 - 3x
-    funcLabel = 'f(x) = x³ - 3x';
-    derivLabel = "f'(x) = 3x² - 3";
-    fx = Math.pow(x0, 3) - 3 * x0;
-    dfx = 3 * Math.pow(x0, 2) - 3;
-    integral = (Math.pow(x0, 4) / 4) - (3 * Math.pow(x0, 2) / 2);
+    funcLabel = 'f(x) = 0.2x³ - x';
+    derivLabel = "f'(x) = 0.6x² - 1";
+    fx = evalFunc(x0);
+    dfx = 0.6 * Math.pow(x0, 2) - 1;
+    integral = (0.05 * Math.pow(x0, 4)) - (0.5 * Math.pow(x0, 2));
   }
 
-  // Generate SVG curve points for calculus
+  // Generate SVG curve points for calculus (strictly clamped to viewport)
   const width = 360;
   const height = 220;
   const xMin = -3.0;
   const xMax = 3.0;
-  const yMin = -5.0;
-  const yMax = 5.0;
+  const yMin = -4.5;
+  const yMax = 4.5;
 
-  const toSvgX = (x: number) => ((x - xMin) / (xMax - xMin)) * width;
-  const toSvgY = (y: number) => height - ((y - yMin) / (yMax - yMin)) * height;
+  const toSvgX = (x: number) => {
+    const clamped = Math.max(xMin, Math.min(xMax, x));
+    return ((clamped - xMin) / (xMax - xMin)) * width;
+  };
+  const toSvgY = (y: number) => {
+    const clamped = Math.max(yMin, Math.min(yMax, y));
+    return height - ((clamped - yMin) / (yMax - yMin)) * height;
+  };
 
   let curvePoints = '';
-  for (let x = xMin; x <= xMax; x += 0.1) {
-    let y = 0;
-    if (calcFunc === 'poly') y = x * x - 4 * x + 3;
-    else if (calcFunc === 'trig') y = Math.sin(x);
-    else y = Math.pow(x, 3) - 3 * x;
+  for (let x = xMin; x <= xMax; x += 0.05) {
+    const y = evalFunc(x);
     const sx = toSvgX(x);
     const sy = toSvgY(y);
     curvePoints += `${x === xMin ? 'M' : 'L'} ${sx.toFixed(1)} ${sy.toFixed(1)} `;
   }
 
-  // Tangent line: y - fx = dfx * (x - x0) => y = dfx * (x - x0) + fx
-  const tanX1 = x0 - 1.5;
-  const tanY1 = dfx * (tanX1 - x0) + fx;
-  const tanX2 = x0 + 1.5;
-  const tanY2 = dfx * (tanX2 - x0) + fx;
+  // Tangent line bounded within plot window
+  const tanSpan = 1.3;
+  const tanX1 = Math.max(xMin, x0 - tanSpan);
+  const tanY1 = Math.max(yMin, Math.min(yMax, evalFunc(x0) + dfx * (tanX1 - x0)));
+  const tanX2 = Math.min(xMax, x0 + tanSpan);
+  const tanY2 = Math.max(yMin, Math.min(yMax, evalFunc(x0) + dfx * (tanX2 - x0)));
 
   // Shaded integral area polygon
-  let areaPoly = `M ${toSvgX(0)} ${toSvgY(0)} `;
+  let areaPoly = `M ${toSvgX(0).toFixed(1)} ${toSvgY(0).toFixed(1)} `;
   const step = x0 >= 0 ? 0.05 : -0.05;
-  for (let x = 0; Math.abs(x) <= Math.abs(x0); x += step) {
-    let y = 0;
-    if (calcFunc === 'poly') y = x * x - 4 * x + 3;
-    else if (calcFunc === 'trig') y = Math.sin(x);
-    else y = Math.pow(x, 3) - 3 * x;
-    areaPoly += `L ${toSvgX(x)} ${toSvgY(y)} `;
+  if (Math.abs(x0) > 0.01) {
+    for (let x = 0; Math.abs(x) <= Math.abs(x0); x += step) {
+      const y = evalFunc(x);
+      areaPoly += `L ${toSvgX(x).toFixed(1)} ${toSvgY(y).toFixed(1)} `;
+    }
   }
-  areaPoly += `L ${toSvgX(x0)} ${toSvgY(0)} Z`;
+  areaPoly += `L ${toSvgX(x0).toFixed(1)} ${toSvgY(0).toFixed(1)} Z`;
 
   // Matrix Determinant & Basis Vectors
   const det = matA * matD - matB * matC;
@@ -4723,10 +4785,36 @@ export const StudentLearningView: React.FC = () => {
       { term: 'Riemann Integration', native: 'समाकलन (Integration)', translit: 'Samakalan', desc: 'वक्राखालील एकूण क्षेत्रफळ आणि संचयी परिमाणांची गणना.' },
       { term: 'Matrix Transformation', native: 'मॅट्रिक्स रूपांतरण (Matrix Transform)', translit: 'Matrix Roopantaran', desc: 'रेषीय संयोजनांद्वारे समन्वय प्रणालीचे रूपांतरण.' },
       { term: 'Binary Search Tree', native: 'बायनरी शोध ट्री (BST)', translit: 'Binary Shodh Tree', desc: 'एक डेटा रचना जिथे डावा घटक < मूळ < उजवा घटक असतो.' }
+    ],
+    Tamil: [
+      { term: 'Differential Calculus', native: 'நுண்கணிதம் (Calculus)', translit: 'Nunkalitham', desc: 'உடனடி மாற்ற விகிதம் மற்றும் தொடுகோட்டு சாய்வு பற்றிய கணித ஆய்வு.' },
+      { term: 'Riemann Integration', native: 'தொகையீட்டு கணிதம் (Integration)', translit: 'Thogaiyeedu', desc: 'தொடர்ச்சியான அளவுகளின் குவிப்பு மற்றும் வளைவின் கீழ் பரப்பளவைக் கணக்கிடுதல்.' },
+      { term: 'Matrix Transformation', native: 'அணி உருமாற்றம் (Matrix Transform)', translit: 'Ani Urumaattram', desc: 'நேரியல் சேர்க்கைகள் மூலம் ஒருங்கிணைப்பு தளங்களை ஒரு இடத்திலிருந்து மற்றொன்றுக்கு மாற்றுதல்.' },
+      { term: 'Binary Search Tree', native: 'இருமை தேடல் மரம் (BST)', translit: 'Irumai Thedal Maram', desc: 'இடது குழந்தை < வேர் < வலது குழந்தை என்ற படிநிலை தரவு அமைப்பு (O(log n) தேடல்).' }
+    ],
+    Telugu: [
+      { term: 'Differential Calculus', native: 'అవకలన గణితం (Calculus)', translit: 'Avakalana Ganitam', desc: 'తక్షణ మార్పు రేటు మరియు స్పర్శరేఖ వాలుపై గణిత పరిశీలన.' },
+      { term: 'Riemann Integration', native: 'సమాకలన గణితం (Integration)', translit: 'Samakalana Ganitam', desc: 'నిరంతర పరిమాణాల కూర్పు మరియు వక్రరేఖ కింద విస్తీర్ణాన్ని లెక్కించడం.' },
+      { term: 'Matrix Transformation', native: 'మాత్రిక పరివర్తన (Matrix Transform)', translit: 'Matrika Parivartana', desc: 'లీనియర్ కాంబినేషన్ల ద్వారా సమన్వయ స్థానాన్ని మార్చే పద్ధతి.' },
+      { term: 'Binary Search Tree', native: 'బైనరీ శోధన వృక్షం (BST)', translit: 'Binary Shodhana Vruksham', desc: 'ఎడమ నోడ్ < మూలం < కుడి నోడ్ నిబంధనతో పనిచేసే సోపానక్రమ శోధన నిర్మాణం.' }
+    ],
+    Bengali: [
+      { term: 'Differential Calculus', native: 'অন্তরকলন (Differentiation)', translit: 'Ontor-kolon', desc: 'তাৎক্ষণিক পরিবর্তনের হার ও স্পর্শক ঢাল বিষয়ক গাণিতিক অধ্যয়ন।' },
+      { term: 'Riemann Integration', native: 'সমাকলন (Integration)', translit: 'Somakolon', desc: 'ধারাবাহিক রাশির একত্রীকরণ ও বক্ররেখার নিচের ক্ষেত্রফল পরিমাপ।' },
+      { term: 'Matrix Transformation', native: 'ম্যাট্রিক্স রূপান্তর (Matrix Transform)', translit: 'Matrix Rupantor', desc: 'রৈখিক রূপান্তরের মাধ্যমে স্থানাঙ্ক ব্যবস্থার বিন্যাস পরিবর্তন।' },
+      { term: 'Binary Search Tree', native: 'বাইনারি অনুসন্ধান ট্রি (BST)', translit: 'Binary Onushondhan Tree', desc: 'একটি স্তরভিত্তিক ডেটা কাঠামো যেখানে বাম সন্তান < মূল < ডান সন্তান বজায় থাকে।' }
     ]
   };
 
   const activeDict = DICTIONARY[selectedLang] || DICTIONARY['English'];
+
+  const handleGraphInteraction = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const newX0 = xMin + ratio * (xMax - xMin);
+    setX0(parseFloat(newX0.toFixed(2)));
+  };
 
   return (
     <div className="space-y-6">
@@ -4738,7 +4826,7 @@ export const StudentLearningView: React.FC = () => {
             <span className="text-xs font-semibold text-[#2C3524]">Language:</span>
             <select
               value={selectedLang}
-              onChange={(e) => setSelectedLang(e.target.value)}
+              onChange={(e) => handleLanguageChange(e.target.value)}
               className="p-1.5 rounded-lg border border-[#E1D6AE] bg-white text-xs font-semibold text-[#2C3524]"
             >
               <option value="English">English</option>
@@ -4841,37 +4929,102 @@ export const StudentLearningView: React.FC = () => {
               </div>
             </div>
 
-            {/* Live SVG Graph */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-              <svg width="100%" height={240} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
-                {/* Axes */}
-                <line x1={0} y1={toSvgY(0)} x2={width} y2={toSvgY(0)} stroke="#475569" strokeWidth="1.5" />
-                <line x1={toSvgX(0)} y1={0} x2={toSvgX(0)} y2={height} stroke="#475569" strokeWidth="1.5" />
+            {/* Live Interactive SVG Graph */}
+            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center relative select-none">
+              <div className="w-full flex items-center justify-between text-xs text-slate-400 font-mono mb-2">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                  Curve: <strong className="text-sky-300">{funcLabel}</strong>
+                </span>
+                <span className="text-[11px] text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded border border-emerald-800/50">
+                  Interactive: Click anywhere on graph
+                </span>
+              </div>
+              <svg
+                width="100%"
+                height={240}
+                viewBox={`0 0 ${width} ${height}`}
+                className="overflow-hidden rounded-xl bg-slate-900/90 cursor-crosshair border border-slate-800/80"
+                onClick={handleGraphInteraction}
+                onMouseMove={(e) => {
+                  if (e.buttons === 1) handleGraphInteraction(e);
+                }}
+              >
+                <defs>
+                  <clipPath id="calcPlotClip">
+                    <rect x="0" y="0" width={width} height={height} rx="8" />
+                  </clipPath>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.05" />
+                  </linearGradient>
+                </defs>
 
-                {/* Shaded Area Under Curve */}
-                <path d={areaPoly} fill="#10b981" fillOpacity="0.25" />
+                <g clipPath="url(#calcPlotClip)">
+                  {/* Subtle Grid Lines */}
+                  {[-2, -1, 1, 2].map((gx) => (
+                    <line
+                      key={`gx-${gx}`}
+                      x1={toSvgX(gx)}
+                      y1={0}
+                      x2={toSvgX(gx)}
+                      y2={height}
+                      stroke="#334155"
+                      strokeWidth="0.8"
+                      strokeDasharray="2 3"
+                    />
+                  ))}
+                  {[-3, -1.5, 1.5, 3].map((gy) => (
+                    <line
+                      key={`gy-${gy}`}
+                      x1={0}
+                      y1={toSvgY(gy)}
+                      x2={width}
+                      y2={toSvgY(gy)}
+                      stroke="#334155"
+                      strokeWidth="0.8"
+                      strokeDasharray="2 3"
+                    />
+                  ))}
 
-                {/* Curve */}
-                <path d={curvePoints} fill="none" stroke="#38bdf8" strokeWidth="2.5" />
+                  {/* Axes */}
+                  <line x1={0} y1={toSvgY(0)} x2={width} y2={toSvgY(0)} stroke="#64748b" strokeWidth="1.5" />
+                  <line x1={toSvgX(0)} y1={0} x2={toSvgX(0)} y2={height} stroke="#64748b" strokeWidth="1.5" />
 
-                {/* Tangent Line */}
-                <line
-                  x1={toSvgX(tanX1)}
-                  y1={toSvgY(tanY1)}
-                  x2={toSvgX(tanX2)}
-                  y2={toSvgY(tanY2)}
-                  stroke="#f43f5e"
-                  strokeWidth="2"
-                  strokeDasharray="4 2"
-                />
+                  {/* Shaded Area Under Curve */}
+                  <path d={areaPoly} fill="url(#areaGrad)" />
 
-                {/* Point at x0 */}
-                <circle cx={toSvgX(x0)} cy={toSvgY(fx)} r="5" fill="#f43f5e" stroke="#fff" strokeWidth="1.5" />
+                  {/* Function Curve */}
+                  <path d={curvePoints} fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
+
+                  {/* Tangent Line */}
+                  <line
+                    x1={toSvgX(tanX1)}
+                    y1={toSvgY(tanY1)}
+                    x2={toSvgX(tanX2)}
+                    y2={toSvgY(tanY2)}
+                    stroke="#f43f5e"
+                    strokeWidth="2.2"
+                    strokeDasharray="4 2"
+                  />
+
+                  {/* Point at x0 with ripple effect */}
+                  <circle cx={toSvgX(x0)} cy={toSvgY(fx)} r="9" fill="#f43f5e" fillOpacity="0.25" />
+                  <circle cx={toSvgX(x0)} cy={toSvgY(fx)} r="5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2" />
+
+                  {/* Dynamic Tooltip on the Point */}
+                  <g transform={`translate(${Math.max(10, Math.min(width - 95, toSvgX(x0) - 45))}, ${toSvgY(fx) > 40 ? toSvgY(fx) - 30 : toSvgY(fx) + 12})`}>
+                    <rect width="95" height="22" rx="4" fill="#0f172a" fillOpacity="0.92" stroke="#38bdf8" strokeWidth="1" />
+                    <text x="47" y="15" textAnchor="middle" fill="#f8fafc" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                      ({x0.toFixed(2)}, {fx.toFixed(2)})
+                    </text>
+                  </g>
+                </g>
               </svg>
-              <div className="w-full flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+              <div className="w-full flex justify-between text-[11px] text-slate-400 font-mono mt-2">
                 <span>x = -3.0</span>
-                <span className="text-emerald-400">Shaded: ∫₀^{x0.toFixed(1)} f(x) dx</span>
-                <span className="text-rose-400">Dashed: Tangent (Slope m = {dfx.toFixed(2)})</span>
+                <span className="text-emerald-400 font-semibold">Area: ∫₀^{x0.toFixed(1)} = {integral.toFixed(2)}</span>
+                <span className="text-rose-400 font-semibold">Slope m = {dfx.toFixed(2)}</span>
                 <span>x = +3.0</span>
               </div>
             </div>

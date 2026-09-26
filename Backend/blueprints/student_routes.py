@@ -39,6 +39,102 @@ SUBJECT_CATALOG = [
 
 # Offline High-Quality Question Bank for Instant Diagnostics & Practice
 DEFAULT_QUESTION_BANK = {
+    "dsa": [
+        {"q": "What is the worst-case time complexity of searching for an element in a balanced Binary Search Tree (AVL / Red-Black)?", "options": {"A": "O(1)", "B": "O(log n)", "C": "O(n)", "D": "O(n log n)"}, "ans": "B", "level": "Basic", "topic": "Trees & Binary Search Trees"},
+        {"q": "Which data structure follows the First-In-First-Out (FIFO) principle and is commonly used in Breadth-First Search (BFS)?", "options": {"A": "Stack", "B": "Queue", "C": "Priority Queue", "D": "Binary Heap"}, "ans": "B", "level": "Basic", "topic": "Queues & Breadth-First Search"},
+        {"q": "In hashing, what technique resolves collisions by storing colliding elements in a linked list at the same bucket index?", "options": {"A": "Linear Probing", "B": "Separate Chaining", "C": "Quadratic Probing", "D": "Double Hashing"}, "ans": "B", "level": "Basic", "topic": "Hashing & Hash Tables"},
+        {"q": "What is the average and worst-case time complexity of QuickSort?", "options": {"A": "Avg: O(n log n), Worst: O(n^2)", "B": "Avg: O(n), Worst: O(n log n)", "C": "Avg: O(n log n), Worst: O(n log n)", "D": "Avg: O(n^2), Worst: O(n^2)"}, "ans": "A", "level": "Intermediate", "topic": "Sorting Algorithms"},
+        {"q": "Which algorithm is guaranteed to find the shortest path from a single source to all vertices in a weighted graph with non-negative edge weights?", "options": {"A": "Prim's Algorithm", "B": "Dijkstra's Algorithm", "C": "Kruskal's Algorithm", "D": "Floyd-Warshall Algorithm"}, "ans": "B", "level": "Intermediate", "topic": "Graph Algorithms"},
+        {"q": "What is the optimal substructure and overlapping subproblems property characteristic of?", "options": {"A": "Greedy Algorithms", "B": "Dynamic Programming", "C": "Divide and Conquer", "D": "Backtracking"}, "ans": "B", "level": "Intermediate", "topic": "Dynamic Programming"},
+        {"q": "In a Min-Heap of size N, what is the time complexity to insert a new element and maintain the heap property?", "options": {"A": "O(1)", "B": "O(log N)", "C": "O(N)", "D": "O(N log N)"}, "ans": "B", "level": "Intermediate", "topic": "Heaps & Priority Queues"},
+        {"q": "Which algorithm can detect a cycle in a singly linked list in O(1) auxiliary space?", "options": {"A": "Dijkstra's Algorithm", "B": "Floyd's Tortoise and Hare (Two Pointer)", "C": "Tarjan's Algorithm", "D": "Bellman-Ford Algorithm"}, "ans": "B", "level": "Advanced", "topic": "Linked Lists & Pointers"},
+        {"q": "What is the minimum number of comparisons required in the worst-case to sort N elements using comparison-based sorting?", "options": {"A": "O(N)", "B": "Omega(N log N)", "C": "O(N^2)", "D": "O(log N)"}, "ans": "B", "level": "Advanced", "topic": "Asymptotic Complexity & Lower Bounds"},
+        {"q": "In dynamic programming, what is the time complexity of solving the 0/1 Knapsack problem with N items and capacity W?", "options": {"A": "O(2^N)", "B": "O(N * W)", "C": "O(N + W)", "D": "O(W^2)"}, "ans": "B", "level": "Advanced", "topic": "Dynamic Programming"}
+    ],
+    "os": [
+        {"q": "What is the primary difference between a process and a thread?", "options": {"A": "Processes share address space while threads do not", "B": "Threads of the same process share code, data, and open files, but have separate stacks", "C": "Threads require separate memory protection tables", "D": "Processes are lighter than threads"}, "ans": "B", "level": "Basic", "topic": "Processes & Threads"},
+        {"q": "Which of the following is NOT one of Coffman's four necessary conditions for deadlock?", "options": {"A": "Mutual Exclusion", "B": "Hold and Wait", "C": "Preemption allowed", "D": "Circular Wait"}, "ans": "C", "level": "Basic", "topic": "Deadlocks"},
+        {"q": "What CPU scheduling algorithm assigns each process a fixed time slice in cyclic order?", "options": {"A": "First-Come, First-Served (FCFS)", "B": "Shortest Job First (SJF)", "C": "Round Robin (RR)", "D": "Priority Scheduling"}, "ans": "C", "level": "Basic", "topic": "CPU Scheduling"},
+        {"q": "What hardware component translates virtual memory addresses to physical memory addresses in modern architectures?", "options": {"A": "ALU", "B": "Memory Management Unit (MMU)", "C": "DMA Controller", "D": "Instruction Register"}, "ans": "B", "level": "Intermediate", "topic": "Virtual Memory & Paging"},
+        {"q": "What phenomenon occurs when excessive page swapping degrades system CPU utilization close to zero?", "options": {"A": "Fragmentation", "B": "Thrashing", "C": "Starvation", "D": "Belady's Anomaly"}, "ans": "B", "level": "Intermediate", "topic": "Page Replacement & Thrashing"},
+        {"q": "In process synchronization, what is a binary semaphore commonly used to implement?", "options": {"A": "Thread pooling", "B": "Mutual Exclusion (Mutex Lock)", "C": "Cache coherence", "D": "Direct memory access"}, "ans": "B", "level": "Intermediate", "topic": "Concurrency & Semaphores"},
+        {"q": "Which page replacement algorithm suffers from Belady's Anomaly (where increasing page frames increases page faults)?", "options": {"A": "Least Recently Used (LRU)", "B": "First-In-First-Out (FIFO)", "C": "Optimal Page Replacement", "D": "Clock Algorithm"}, "ans": "B", "level": "Intermediate", "topic": "Page Replacement Algorithms"},
+        {"q": "What mechanism does an operating system use to prevent user processes from executing privileged machine instructions directly?", "options": {"A": "Dual-mode operation (User Mode vs Kernel Mode)", "B": "Garbage Collection", "C": "Dynamic Linking", "D": "Spooling"}, "ans": "A", "level": "Advanced", "topic": "Kernel Architecture & Protection"},
+        {"q": "Which algorithm is used by operating systems to safely avoid deadlocks by simulating allocation before granting resources?", "options": {"A": "Dijkstra's Banker's Algorithm", "B": "Peterson's Algorithm", "C": "Lamport's Bakery Algorithm", "D": "Kruskal's Algorithm"}, "ans": "A", "level": "Advanced", "topic": "Deadlock Avoidance"},
+        {"q": "What is the purpose of the Translation Lookaside Buffer (TLB) in virtual memory systems?", "options": {"A": "Store disk sectors", "B": "Cache recent virtual-to-physical address translations for rapid lookup", "C": "Buffer network packets", "D": "Serialize CPU interrupts"}, "ans": "B", "level": "Advanced", "topic": "Memory Architecture & TLB"}
+    ],
+    "dbms": [
+        {"q": "Which property in ACID ensures that all operations in a database transaction complete successfully, or none take effect?", "options": {"A": "Atomicity", "B": "Consistency", "C": "Isolation", "D": "Durability"}, "ans": "A", "level": "Basic", "topic": "ACID Properties & Transactions"},
+        {"q": "What type of SQL JOIN returns all rows from the left table, and matched rows from the right table?", "options": {"A": "INNER JOIN", "B": "LEFT OUTER JOIN", "C": "RIGHT OUTER JOIN", "D": "FULL OUTER JOIN"}, "ans": "B", "level": "Basic", "topic": "SQL Queries & Joins"},
+        {"q": "Which normal form requires removing partial functional dependencies on a composite primary key?", "options": {"A": "First Normal Form (1NF)", "B": "Second Normal Form (2NF)", "C": "Third Normal Form (3NF)", "D": "Boyce-Codd Normal Form (BCNF)"}, "ans": "B", "level": "Intermediate", "topic": "Database Normalization"},
+        {"q": "What data structure is standard for indexing database tables on disk because of high fan-out and shallow height?", "options": {"A": "Binary Search Tree", "B": "B+ Tree", "C": "Red-Black Tree", "D": "Skip List"}, "ans": "B", "level": "Intermediate", "topic": "Indexing & B+ Trees"},
+        {"q": "What does a FOREIGN KEY constraint enforce in relational databases?", "options": {"A": "Entity Integrity", "B": "Referential Integrity", "C": "Domain Integrity", "D": "User-Defined Integrity"}, "ans": "B", "level": "Basic", "topic": "Relational Integrity Constraints"},
+        {"q": "In transaction isolation levels, what concurrency read problem is prevented by REPEATABLE READ but not by READ COMMITTED?", "options": {"A": "Dirty Read", "B": "Non-Repeatable (Fuzzy) Read", "C": "Phantom Read", "D": "Lost Update"}, "ans": "B", "level": "Intermediate", "topic": "Isolation Levels & Concurrency"},
+        {"q": "What is the primary trade-off between clustered and non-clustered indexes in SQL databases?", "options": {"A": "Clustered indexes determine physical row order on disk and only one can exist per table", "B": "Non-clustered indexes can only index integer columns", "C": "Clustered indexes do not support range queries", "D": "Non-clustered indexes duplicate all table columns"}, "ans": "A", "level": "Intermediate", "topic": "Database Indexing"},
+        {"q": "What write protocol guarantees Write-Ahead Logging (WAL) in database crash recovery?", "options": {"A": "Data pages must be flushed before transaction logs", "B": "Log records must be flushed to non-volatile storage before corresponding dirty pages are written", "C": "All transactions must be aborted on checkpoint", "D": "Shadow paging must replace buffer management"}, "ans": "B", "level": "Advanced", "topic": "Crash Recovery & ARIES"},
+        {"q": "In distributed databases, the CAP theorem states that a system can provide at most two of which three guarantees?", "options": {"A": "Consistency, Availability, Partition Tolerance", "B": "Concurrency, Atomicity, Performance", "C": "Correctness, Adaptability, Persistence", "D": "Capacity, Authentication, Privacy"}, "ans": "A", "level": "Advanced", "topic": "Distributed Databases & CAP"},
+        {"q": "What lock-based protocol guarantees conflict serializability in multi-transaction execution?", "options": {"A": "Two-Phase Locking (2PL)", "B": "Single-phase commit", "C": "Optimistic Concurrency Control without validation", "D": "Timestamp ordering without rollback"}, "ans": "A", "level": "Advanced", "topic": "Concurrency Control"}
+    ],
+    "webdev": [
+        {"q": "In the CSS Box Model, which layer is positioned between padding and margin?", "options": {"A": "Content", "B": "Border", "C": "Outline", "D": "Shadow"}, "ans": "B", "level": "Basic", "topic": "CSS Box Model & Styling"},
+        {"q": "Which HTTP method is idempotent and primarily used to update an entire existing resource representation?", "options": {"A": "POST", "B": "PUT", "C": "PATCH", "D": "CONNECT"}, "ans": "B", "level": "Basic", "topic": "HTTP & REST APIs"},
+        {"q": "In modern React, which hook is used to perform side effects like data fetching or DOM subscriptions?", "options": {"A": "useState", "B": "useEffect", "C": "useMemo", "D": "useReducer"}, "ans": "B", "level": "Basic", "topic": "React Hooks & Lifecycle"},
+        {"q": "What is the primary role of the JavaScript Event Loop?", "options": {"A": "Compiles JavaScript to assembly", "B": "Continuously monitors the Call Stack and moves callbacks from Task Queue when Call Stack is empty", "C": "Manages browser memory allocation", "D": "Renders CSS animations at 60 FPS"}, "ans": "B", "level": "Intermediate", "topic": "JavaScript Concurrency & Event Loop"},
+        {"q": "What security header prevents Cross-Site Scripting (XSS) by restricting where scripts, styles, and images can load from?", "options": {"A": "CORS Access-Control-Allow-Origin", "B": "Content-Security-Policy (CSP)", "C": "X-Frame-Options", "D": "Strict-Transport-Security"}, "ans": "B", "level": "Intermediate", "topic": "Web Security & XSS"},
+        {"q": "What mechanism enables client-side web applications to securely maintain state without sending tokens on every cross-domain asset request?", "options": {"A": "HttpOnly SameSite cookies", "B": "URL query parameters", "C": "Local storage eval()", "D": "WebSocket headers"}, "ans": "A", "level": "Intermediate", "topic": "Authentication & State"},
+        {"q": "In React 18+, what is the difference between `useMemo` and `useCallback`?", "options": {"A": "useMemo memoizes a computed value; useCallback memoizes a callback function definition", "B": "useCallback caches JSX elements while useMemo triggers side effects", "C": "They are exact synonyms with identical signatures", "D": "useMemo runs asynchronously on web workers"}, "ans": "A", "level": "Intermediate", "topic": "React Performance"},
+        {"q": "What is the purpose of HTTP/2 multiplexing compared to HTTP/1.1 pipelining?", "options": {"A": "Allows multiple bidirectional requests and responses concurrently over a single TCP connection without head-of-line blocking", "B": "Encrypts TCP payloads without TLS", "C": "Compresses server code using Gzip only", "D": "Replaces IP routing with DNS cache"}, "ans": "A", "level": "Advanced", "topic": "Web Protocols & Networking"},
+        {"q": "How does Server-Side Rendering (SSR) in frameworks like Next.js improve Core Web Vitals over pure Single-Page Apps (SPA)?", "options": {"A": "Provides pre-rendered HTML on initial load, drastically reducing Largest Contentful Paint (LCP) and First Contentful Paint (FCP)", "B": "Removes the need for JavaScript entirely", "C": "Eliminates all network database queries", "D": "Prevents client browser hydration"}, "ans": "A", "level": "Advanced", "topic": "Full-Stack Architecture & SSR"},
+        {"q": "What is the Same-Origin Policy (SOP) in web browsers, and what enables controlled relaxation for specific APIs?", "options": {"A": "Cross-Origin Resource Sharing (CORS)", "B": "WebAssembly", "C": "Service Worker Cache", "D": "Document Object Model"}, "ans": "A", "level": "Advanced", "topic": "Browser Architecture & CORS"}
+    ],
+    "ai_ml": [
+        {"q": "What type of machine learning uses labeled input-output pairs to train predictive models?", "options": {"A": "Supervised Learning", "B": "Unsupervised Learning", "C": "Reinforcement Learning", "D": "Self-Supervised Clustering"}, "ans": "A", "level": "Basic", "topic": "Machine Learning Paradigms"},
+        {"q": "What metric is most reliable for evaluating a classification model when the dataset has extreme class imbalance (e.g. 99% negative, 1% positive)?", "options": {"A": "Accuracy", "B": "F1-Score / PR-AUC", "C": "Mean Squared Error", "D": "R-squared"}, "ans": "B", "level": "Basic", "topic": "Evaluation Metrics"},
+        {"q": "What problem occurs when a model performs exceptionally well on training data but poorly on unseen test data?", "options": {"A": "Underfitting", "B": "Overfitting", "C": "Data Drift", "D": "Vanishing Gradient"}, "ans": "B", "level": "Basic", "topic": "Generalization & Bias-Variance"},
+        {"q": "Which optimization algorithm updates neural network weights by calculating gradients across mini-batches with momentum and adaptive learning rates?", "options": {"A": "Ordinary Least Squares", "B": "Adam Optimizer", "C": "Simplex Algorithm", "D": "Apriori Algorithm"}, "ans": "B", "level": "Intermediate", "topic": "Optimization & Gradient Descent"},
+        {"q": "What is the primary role of the Self-Attention mechanism in the Transformer architecture?", "options": {"A": "Compute pairwise relevance scores between all tokens in a sequence regardless of distance", "B": "Perform spatial convolution over 2D pixels", "C": "Compress images to latent vectors", "D": "Eliminate matrix multiplication"}, "ans": "A", "level": "Intermediate", "topic": "Deep Learning & Transformers"},
+        {"q": "What regularization technique randomly sets a fraction of neuron activations to zero during training to prevent co-adaptation?", "options": {"A": "Batch Normalization", "B": "Dropout", "C": "Early Stopping", "D": "Gradient Clipping"}, "ans": "B", "level": "Intermediate", "topic": "Neural Network Regularization"},
+        {"q": "In neural networks, why did the ReLU (Rectified Linear Unit) activation function largely replace Sigmoid in hidden layers?", "options": {"A": "It mitigates the vanishing gradient problem for positive inputs and is computationally fast", "B": "It bounds outputs strictly between -1 and 1", "C": "It produces differentiable complex numbers", "D": "It prevents overfitting automatically"}, "ans": "A", "level": "Intermediate", "topic": "Activation Functions"},
+        {"q": "What mathematical technique allows Large Language Models (LLMs) to be fine-tuned efficiently by training low-rank decomposition matrices (LoRA)?", "options": {"A": "Low-Rank Adaptation (LoRA)", "B": "Quantization-Aware Training without adapters", "C": "Full Model Pruning", "D": "Greedy Beam Search"}, "ans": "A", "level": "Advanced", "topic": "LLM Fine-Tuning & Parameter Efficiency"},
+        {"q": "In Reinforcement Learning, what equation expresses the optimal action-value function Q*(s, a) recursively?", "options": {"A": "Bellman Optimality Equation", "B": "Navier-Stokes Equation", "C": "Bayes' Theorem", "D": "Schrodinger Equation"}, "ans": "A", "level": "Advanced", "topic": "Reinforcement Learning"},
+        {"q": "What does the Kullback-Leibler (KL) divergence measure in probabilistic machine learning and Variational Autoencoders (VAEs)?", "options": {"A": "The statistical distance / information difference between two probability distributions", "B": "The Euclidean distance between vector centroids", "C": "The classification accuracy on test sets", "D": "The learning rate schedule"}, "ans": "A", "level": "Advanced", "topic": "Generative Models & Information Theory"}
+    ],
+    "computer_science": [
+        {"q": "What is the primary function of an operating system's compiler front-end?", "options": {"A": "Lexical analysis, syntax parsing, and semantic verification into an intermediate representation", "B": "Link machine binaries", "C": "Allocate physical memory pages", "D": "Execute assembly code directly"}, "ans": "A", "level": "Basic", "topic": "Compiler Design"},
+        {"q": "In the OSI 7-Layer Reference Model, at which layer do IP addressing and packet routing occur?", "options": {"A": "Data Link Layer (Layer 2)", "B": "Network Layer (Layer 3)", "C": "Transport Layer (Layer 4)", "D": "Session Layer (Layer 5)"}, "ans": "B", "level": "Basic", "topic": "Computer Networks"},
+        {"q": "What boolean logic gate produces an output of 1 if and only if its two inputs differ?", "options": {"A": "AND", "B": "OR", "C": "XOR", "D": "NAND"}, "ans": "C", "level": "Basic", "topic": "Digital Logic & Computer Organization"},
+        {"q": "Which protocol provides reliable, connection-oriented byte stream transmission with flow and congestion control?", "options": {"A": "UDP", "B": "TCP", "C": "ICMP", "D": "ARP"}, "ans": "B", "level": "Intermediate", "topic": "Transport Layer Protocols"},
+        {"q": "In computer architecture, what hazard occurs when an instruction depends on the result of a previous instruction still in the pipeline?", "options": {"A": "Structural Hazard", "B": "Data Hazard", "C": "Control Hazard", "D": "Bus Hazard"}, "ans": "B", "level": "Intermediate", "topic": "Instruction Pipelining"},
+        {"q": "What computational complexity class contains decision problems verifiable in polynomial time by a deterministic Turing machine?", "options": {"A": "P", "B": "NP", "C": "NP-Hard", "D": "EXPTIME"}, "ans": "B", "level": "Intermediate", "topic": "Theory of Computation"},
+        {"q": "What cryptographic algorithm provides asymmetric public-key encryption and digital signatures based on the hardness of factoring large prime numbers?", "options": {"A": "AES-256", "B": "RSA", "C": "SHA-3", "D": "DES"}, "ans": "B", "level": "Intermediate", "topic": "Cryptography & Information Security"},
+        {"q": "What is the Halting Problem, and what did Alan Turing prove regarding its solvability?", "options": {"A": "It is undecidable: no general algorithm can decide whether an arbitrary program will halt on a given input", "B": "It can be solved in O(n!) time", "C": "It is decidable for all Turing machines", "D": "It applies only to quantum computers"}, "ans": "A", "level": "Advanced", "topic": "Computability & Automata"},
+        {"q": "In distributed consensus, which algorithm is widely used in modern cloud orchestrators (e.g. etcd, Kubernetes) for replicated state machines?", "options": {"A": "Raft / Paxos", "B": "Binary Search", "C": "Quicksort", "D": "Simulated Annealing"}, "ans": "A", "level": "Advanced", "topic": "Distributed Systems"},
+        {"q": "In cache design, what principle of locality explains why recently accessed instructions are likely to be accessed again soon?", "options": {"A": "Temporal Locality", "B": "Spatial Locality", "C": "Sequential Locality", "D": "Associative Locality"}, "ans": "A", "level": "Intermediate", "topic": "Computer Architecture & Caching"}
+    ],
+    "chemistry": [
+        {"q": "What is the pH of a neutral aqueous solution at 25°C?", "options": {"A": "0", "B": "7", "C": "14", "D": "1"}, "ans": "B", "level": "Basic", "topic": "Acids, Bases & pH"},
+        {"q": "Which type of chemical bond involves the electrostatic attraction between oppositely charged ions?", "options": {"A": "Covalent bond", "B": "Ionic bond", "C": "Metallic bond", "D": "Hydrogen bond"}, "ans": "B", "level": "Basic", "topic": "Chemical Bonding"},
+        {"q": "According to Le Chatelier's Principle, what happens to an exothermic equilibrium reaction when the temperature is increased?", "options": {"A": "Shifts toward products (forward)", "B": "Shifts toward reactants (reverse)", "C": "No shift in equilibrium", "D": "Equilibrium constant K increases"}, "ans": "B", "level": "Intermediate", "topic": "Chemical Equilibrium"},
+        {"q": "What is the hybridization and molecular geometry of methane (CH4)?", "options": {"A": "sp2, Trigonal planar", "B": "sp3, Tetrahedral", "C": "sp, Linear", "D": "dsp2, Square planar"}, "ans": "B", "level": "Intermediate", "topic": "Organic Chemistry & Hybridization"},
+        {"q": "In thermodynamics, what state function measures the degree of molecular disorder or randomness in a system?", "options": {"A": "Enthalpy (H)", "B": "Entropy (S)", "C": "Gibbs Free Energy (G)", "D": "Internal Energy (U)"}, "ans": "B", "level": "Basic", "topic": "Thermodynamics"},
+        {"q": "What is the oxidation state of Chromium in the dichromate ion (Cr2O7^2-)?", "options": {"A": "+3", "B": "+6", "C": "+7", "D": "+4"}, "ans": "B", "level": "Intermediate", "topic": "Redox Reactions & Electrochemistry"},
+        {"q": "Which spectroscopic technique is primarily used to identify organic functional groups by measuring molecular vibrational transitions?", "options": {"A": "Nuclear Magnetic Resonance (NMR)", "B": "Infrared (IR) Spectroscopy", "C": "Mass Spectrometry (MS)", "D": "UV-Visible Spectroscopy"}, "ans": "B", "level": "Intermediate", "topic": "Spectroscopy & Analytical Chemistry"},
+        {"q": "What is the criteria for a chemical reaction to be thermodynamically spontaneous at constant temperature and pressure?", "options": {"A": "Delta H < 0 always", "B": "Delta G < 0 (Gibbs Free Energy decrease)", "C": "Delta S < 0", "D": "Delta G > 0"}, "ans": "B", "level": "Intermediate", "topic": "Chemical Thermodynamics"},
+        {"q": "Which reaction mechanism involves a single concerted bimolecular transition state with inversion of stereochemical configuration?", "options": {"A": "SN1", "B": "SN2", "C": "E1", "D": "E2"}, "ans": "B", "level": "Advanced", "topic": "Organic Reaction Mechanisms"},
+        {"q": "According to the Arrhenius equation, how does a catalyst accelerate a chemical reaction?", "options": {"A": "By increasing temperature", "B": "By providing an alternative reaction pathway with lower activation energy (Ea)", "C": "By shifting equilibrium position", "D": "By increasing collision rate only"}, "ans": "B", "level": "Advanced", "topic": "Chemical Kinetics"}
+    ],
+    "biology": [
+        {"q": "Which organelle is known as the powerhouse of eukaryotic cells and generates ATP through cellular respiration?", "options": {"A": "Nucleus", "B": "Mitochondria", "C": "Golgi apparatus", "D": "Endoplasmic Reticulum"}, "ans": "B", "level": "Basic", "topic": "Cell Biology & Organelles"},
+        {"q": "During DNA replication, which enzyme is responsible for synthesizing new DNA strands by adding complementary nucleotides?", "options": {"A": "DNA Ligase", "B": "DNA Polymerase", "C": "RNA Helicase", "D": "Topoisomerase"}, "ans": "B", "level": "Basic", "topic": "Molecular Biology & DNA Replication"},
+        {"q": "What is the primary pigment responsible for absorbing light energy during photosynthesis in green plants?", "options": {"A": "Carotenoid", "B": "Chlorophyll a", "C": "Anthocyanin", "D": "Xanthophyll"}, "ans": "B", "level": "Basic", "topic": "Plant Physiology & Photosynthesis"},
+        {"q": "In human genetics, what phenotypic ratio is expected in the F2 generation of a classic Mendelian monohybrid cross with complete dominance?", "options": {"A": "1:1", "B": "3:1", "C": "9:3:3:1", "D": "1:2:1"}, "ans": "B", "level": "Intermediate", "topic": "Genetics & Heredity"},
+        {"q": "What biological process produces four genetically diverse haploid gamete cells from a single diploid cell?", "options": {"A": "Mitosis", "B": "Meiosis", "C": "Binary Fission", "D": "Budding"}, "ans": "B", "level": "Intermediate", "topic": "Cell Division & Meiosis"},
+        {"q": "In molecular genetics, what is the process of synthesizing mRNA from a DNA template strand called?", "options": {"A": "Translation", "B": "Transcription", "C": "Reverse Transcription", "D": "Transduction"}, "ans": "B", "level": "Basic", "topic": "Central Dogma & Transcription"},
+        {"q": "Which blood vessels carry oxygenated blood from the lungs directly into the left atrium of the human heart?", "options": {"A": "Vena Cava", "B": "Pulmonary Veins", "C": "Pulmonary Arteries", "D": "Aorta"}, "ans": "B", "level": "Intermediate", "topic": "Human Physiology & Circulatory System"},
+        {"q": "What molecular technique uses sequence-specific RNA guides and Cas endonuclease to edit targeted genomic sequences?", "options": {"A": "Western Blotting", "B": "CRISPR-Cas9", "C": "Polymerase Chain Reaction (PCR)", "D": "Gel Electrophoresis"}, "ans": "B", "level": "Advanced", "topic": "Biotechnology & Genetic Engineering"},
+        {"q": "In ecology, what rule states that approximately only 10% of chemical energy transfers from one trophic level to the next?", "options": {"A": "Allen's Rule", "B": "Lindeman's 10% Energy Law", "C": "Bergmann's Rule", "D": "Gause's Competitive Exclusion Principle"}, "ans": "B", "level": "Intermediate", "topic": "Ecology & Ecosystem Dynamics"},
+        {"q": "What immune cells produce antibodies specifically targeted against foreign antigens in humoral immunity?", "options": {"A": "Cytotoxic T cells", "B": "Plasma B cells", "C": "Neutrophils", "D": "Natural Killer (NK) cells"}, "ans": "B", "level": "Advanced", "topic": "Immunology"}
+    ],
     "python": [
         {"q": "What is the time complexity of dictionary key lookup in Python on average?", "options": {"A": "O(n)", "B": "O(1)", "C": "O(log n)", "D": "O(n log n)"}, "ans": "B", "level": "Basic", "topic": "Dictionaries & Sets"},
         {"q": "Which keyword is used to create a generator function in Python?", "options": {"A": "return", "B": "yield", "C": "generator", "D": "async"}, "ans": "B", "level": "Basic", "topic": "Generators & Iterators"},
@@ -76,6 +172,78 @@ DEFAULT_QUESTION_BANK = {
         {"q": "What is the general solution of dy/dx = k*y?", "options": {"A": "y = k*x + C", "B": "y = C * e^(kx)", "C": "y = ln(kx) + C", "D": "y = C * x^k"}, "ans": "B", "level": "Basic", "topic": "Differential Equations"}
     ]
 }
+
+def resolve_subject_questions(subject_name: str):
+    """Accurately maps any subject name or search string to the appropriate detailed question bank."""
+    s = (subject_name or '').lower().strip()
+    
+    # 0. Direct key match
+    if s in DEFAULT_QUESTION_BANK:
+        return DEFAULT_QUESTION_BANK[s]
+
+    # 1. AI / ML / Data Science (checked early to capture abbreviations)
+    if any(k in s for k in ['ai_ml', 'ai/ml', 'aiml', 'artificial intelligence', 'machine learning', 'deep learning', 'neural', 'nlp', 'data science', 'llm', 'computer vision']) or s in ('ai', 'ml'):
+        return DEFAULT_QUESTION_BANK['ai_ml']
+    
+    # 2. Web Development (checked before 'stack' in DSA)
+    if any(k in s for k in ['web', 'frontend', 'backend', 'fullstack', 'full stack', 'html', 'css', 'javascript', 'react', 'node', 'typescript']):
+        return DEFAULT_QUESTION_BANK['webdev']
+
+    # 3. Operating Systems
+    if any(k in s for k in ['operating system', 'kernel', 'process', 'thread', 'scheduling', 'virtual memory', 'deadlock', 'semaphore']) or s == 'os':
+        return DEFAULT_QUESTION_BANK['os']
+    
+    # 4. DBMS / Databases
+    if any(k in s for k in ['dbms', 'database', 'sql', 'rdbms', 'nosql', 'relational', 'normalization', 'acid', 'query']):
+        return DEFAULT_QUESTION_BANK['dbms']
+    
+    # 5. DSA / Data Structures / Algorithms
+    if any(k in s for k in ['dsa', 'data structure', 'algorithm', 'sorting', 'tree', 'graph', 'linked list', 'dynamic programming', 'heap', 'stack', 'queue']):
+        return DEFAULT_QUESTION_BANK['dsa']
+        
+    # 6. Python
+    if 'python' in s:
+        return DEFAULT_QUESTION_BANK['python']
+        
+    # 7. Chemistry
+    if any(k in s for k in ['chem', 'organic', 'inorganic', 'thermodynamics']):
+        return DEFAULT_QUESTION_BANK['chemistry']
+        
+    # 8. Biology
+    if any(k in s for k in ['bio', 'genetics', 'physiology', 'cell', 'botany', 'zoology']):
+        return DEFAULT_QUESTION_BANK['biology']
+        
+    # 9. Physics
+    if any(k in s for k in ['physic', 'mechanics', 'electromagnet', 'optics', 'kinematics', 'quantum']):
+        return DEFAULT_QUESTION_BANK['physics']
+        
+    # 10. Mathematics
+    if any(k in s for k in ['math', 'calculus', 'algebra', 'matrix', 'integral', 'differential', 'statistics', 'discrete']):
+        return DEFAULT_QUESTION_BANK['mathematics']
+        
+    # 11. Computer Science general
+    if any(k in s for k in ['computer science', 'coding', 'programming', 'software']) or s == 'cs':
+        return DEFAULT_QUESTION_BANK['computer_science']
+        
+    # Default fallbacks: technical goes to DSA, general to Mathematics
+    if any(k in s for k in ['tech', 'eng', 'dev', 'code', 'system', 'cyber']):
+        return DEFAULT_QUESTION_BANK['dsa']
+    return DEFAULT_QUESTION_BANK['mathematics']
+
+def compute_realistic_progress_rate(cursor, student_id: int) -> float:
+    """Calculates realistic syllabus completion velocity (%/day) grounded in actual student progress."""
+    cursor.execute("SELECT COUNT(DISTINCT log_date) FROM daily_syllabus_updates WHERE student_id = ?", (student_id,))
+    active_days = cursor.fetchone()[0] or 1
+    cursor.execute("SELECT SUM(completed_percentage), COUNT(*) FROM student_syllabus_progress WHERE student_id = ?", (student_id,))
+    row = cursor.fetchone()
+    if row and row[1] and row[1] > 0:
+        total_pct = row[0] or 0.0
+        avg_pct = total_pct / row[1]
+        daily_rate = round(min(4.5, max(0.8, (avg_pct / max(1, min(active_days, 25))))), 1)
+    else:
+        daily_rate = 1.4
+    cursor.execute("UPDATE students SET syllabus_progress_rate = ? WHERE id = ?", (daily_rate, student_id))
+    return daily_rate
 
 # =========================================================================
 # 1. PROFILE & ONBOARDING
@@ -303,16 +471,7 @@ def get_subject_catalog():
 @role_required('student')
 def get_diagnostic_questions(subject_name):
     """Provides discrete diagnostic test spanning Basic, Intermediate, Advanced levels."""
-    key = subject_name.lower().replace(" ", "").replace("programming", "").replace("engineering", "")
-    questions = None
-    for k in DEFAULT_QUESTION_BANK:
-        if k in key or key in k:
-            questions = DEFAULT_QUESTION_BANK[k]
-            break
-
-    if not questions:
-        # Fallback to general science/technical questions
-        questions = DEFAULT_QUESTION_BANK["python"]
+    questions = resolve_subject_questions(subject_name)
 
     formatted = []
     for idx, q in enumerate(questions):
@@ -339,14 +498,7 @@ def submit_diagnostic_test(subject_name):
     data = request.get_json() or {}
     answers = data.get('answers', {})
 
-    key = subject_name.lower().replace(" ", "").replace("programming", "").replace("engineering", "")
-    questions = None
-    for k in DEFAULT_QUESTION_BANK:
-        if k in key or key in k:
-            questions = DEFAULT_QUESTION_BANK[k]
-            break
-    if not questions:
-        questions = DEFAULT_QUESTION_BANK["python"]
+    questions = resolve_subject_questions(subject_name)
 
     correct_count = 0
     understood = []
@@ -449,11 +601,13 @@ def submit_diagnostic_test(subject_name):
         )
     )
 
-    # Update student's overall knowledge level in profile
+    # Update student's overall knowledge level in profile and recalculate grounded potential score
     cursor.execute(
-        "UPDATE students SET knowledge_level = ?, potential_score = MIN(100.0, potential_score + 2.5) WHERE id = ?",
+        "UPDATE students SET knowledge_level = ? WHERE id = ?",
         (knowledge_level, student_id)
     )
+    calculate_student_potential_score(cursor, student_id)
+    compute_realistic_progress_rate(cursor, student_id)
 
     # Add notification for student
     cursor.execute(
@@ -564,16 +718,9 @@ def update_topic_status(subject_name, topic_id):
             (json.dumps(topics), row['id'])
         )
 
-        # Update student potential and syllabus rate dynamically
-        cursor.execute(
-            """
-            UPDATE students
-            SET potential_score = MIN(100.0, potential_score + 1.2),
-                syllabus_progress_rate = syllabus_progress_rate + 0.3
-            WHERE id = ?
-            """,
-            (student_id,)
-        )
+        # Recalculate grounded potential score and realistic progress rate
+        calculate_student_potential_score(cursor, student_id)
+        compute_realistic_progress_rate(cursor, student_id)
         conn.commit()
     finally:
         conn.close()
@@ -786,16 +933,9 @@ def add_daily_syllabus_update():
             (student_id, subject_name)
         )
 
-    # Boost syllabus progress rate & potential score
-    cursor.execute(
-        """
-        UPDATE students
-        SET syllabus_progress_rate = ROUND(syllabus_progress_rate + 0.4, 1),
-            potential_score = MIN(100.0, potential_score + 0.8)
-        WHERE id = ?
-        """,
-        (student_id,)
-    )
+    # Calculate grounded syllabus progress rate & potential score
+    daily_rate = compute_realistic_progress_rate(cursor, student_id)
+    calculate_student_potential_score(cursor, student_id)
 
     conn.commit()
     conn.close()
@@ -1096,11 +1236,9 @@ def review_study_session():
             )
         )
 
-    # Potential calculation boost
-    cursor.execute(
-        "UPDATE students SET potential_score = MIN(100.0, potential_score + 0.3) WHERE id = ?",
-        (student_id,)
-    )
+    # Recalculate grounded potential score and realistic progress rate
+    calculate_student_potential_score(cursor, student_id)
+    compute_realistic_progress_rate(cursor, student_id)
 
     conn.commit()
     conn.close()
@@ -1254,10 +1392,8 @@ def update_backlog_status(backlog_id):
     )
 
     if status == 'cleared':
-        cursor.execute(
-            "UPDATE students SET potential_score = MIN(100.0, potential_score + 1.2) WHERE id = ?",
-            (student_id,)
-        )
+        calculate_student_potential_score(cursor, student_id)
+        compute_realistic_progress_rate(cursor, student_id)
 
     conn.commit()
     conn.close()
@@ -1522,10 +1658,8 @@ def track_extra_learning_time():
         """,
         (student_id, skill, duration, log_date, notes)
     )
-    cursor.execute(
-        "UPDATE students SET potential_score = MIN(100.0, potential_score + 0.5) WHERE id = ?",
-        (student_id,)
-    )
+    calculate_student_potential_score(cursor, student_id)
+    compute_realistic_progress_rate(cursor, student_id)
     conn.commit()
     conn.close()
 
@@ -1591,14 +1725,7 @@ def get_today_practice_test():
 
     conn.close()
 
-    key = subject.lower().replace(" ", "")
-    questions = None
-    for k in DEFAULT_QUESTION_BANK:
-        if k in key or key in k:
-            questions = DEFAULT_QUESTION_BANK[k]
-            break
-    if not questions:
-        questions = DEFAULT_QUESTION_BANK["physics"]
+    questions = resolve_subject_questions(subject)
 
     formatted = []
     for idx, q in enumerate(questions[:10]):
@@ -1628,14 +1755,7 @@ def submit_practice_test():
     topic_name = data.get('topic_name', 'Comprehensive Practice').strip()
     answers = data.get('answers', {})
 
-    key = subject_name.lower().replace(" ", "")
-    questions = None
-    for k in DEFAULT_QUESTION_BANK:
-        if k in key or key in k:
-            questions = DEFAULT_QUESTION_BANK[k]
-            break
-    if not questions:
-        questions = DEFAULT_QUESTION_BANK["physics"]
+    questions = resolve_subject_questions(subject_name)
 
     correct = 0
     total = len(questions)
@@ -1674,13 +1794,17 @@ def submit_practice_test():
         """
         UPDATE student_syllabus_progress
         SET practice_avg_score = ?,
-            exam_readiness_score = ROUND(exam_readiness_score + 2.0, 1),
-            is_weak_subject = CASE WHEN exam_readiness_score + 2.0 >= 65.0 THEN 0 ELSE 1 END,
+            exam_readiness_score = MIN(100.0, ROUND(exam_readiness_score + 1.5, 1)),
+            is_weak_subject = CASE WHEN exam_readiness_score + 1.5 >= 65.0 THEN 0 ELSE 1 END,
             last_updated = CURRENT_TIMESTAMP
         WHERE student_id = ? AND subject_name = ?
         """,
         (new_avg, student_id, subject_name)
     )
+
+    # Recalculate grounded potential score and realistic progress rate
+    calculate_student_potential_score(cursor, student_id)
+    compute_realistic_progress_rate(cursor, student_id)
 
     conn.commit()
     conn.close()
