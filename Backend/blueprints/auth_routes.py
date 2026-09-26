@@ -464,11 +464,19 @@ def send_real_email_otp(to_email: str, otp_code: str) -> bool:
         """
         msg.attach(MIMEText(html_content, 'html'))
 
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
-        server.starttls()
-        server.login(smtp_email, smtp_password)
-        server.sendmail(smtp_email, to_email, msg.as_string())
-        server.quit()
+        try:
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(smtp_email, smtp_password)
+            server.sendmail(smtp_email, to_email, msg.as_string())
+            server.quit()
+        except Exception:
+            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
+            server_ssl.login(smtp_email, smtp_password)
+            server_ssl.sendmail(smtp_email, to_email, msg.as_string())
+            server_ssl.quit()
         print(f"[Email Dispatcher] Successfully sent live email to {to_email}!")
         return True
     except Exception as e:
@@ -490,9 +498,6 @@ def send_otp():
         'expires_at': expires_at
     }
 
-    domain = email.split('@')[-1]
-    is_demo = domain in DEMO_DOMAINS or 'demo' in email or 'test' in email
-
     # Attempt to send real email via SMTP
     email_dispatched = send_real_email_otp(email, otp_code)
 
@@ -500,7 +505,8 @@ def send_otp():
         print(f"[OTP LOCAL CONSOLE] Live email to {email} could not be sent (configure SMTP_EMAIL and SMTP_PASSWORD in Backend/.env). Development OTP: {otp_code}")
 
     response_payload = {
-        'message': f'Verification OTP sent to {email}! Please check your inbox and spam folder.'
+        'message': f'Verification OTP sent to {email}! Please check your inbox and spam folder.',
+        'email_sent': email_dispatched
     }
 
     return jsonify(response_payload), 200
@@ -555,11 +561,19 @@ def send_password_reset_email(to_email: str, otp_code: str) -> bool:
         """
         msg.attach(MIMEText(html_content, 'html'))
 
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
-        server.starttls()
-        server.login(smtp_email, smtp_password)
-        server.sendmail(smtp_email, to_email, msg.as_string())
-        server.quit()
+        try:
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(smtp_email, smtp_password)
+            server.sendmail(smtp_email, to_email, msg.as_string())
+            server.quit()
+        except Exception:
+            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
+            server_ssl.login(smtp_email, smtp_password)
+            server_ssl.sendmail(smtp_email, to_email, msg.as_string())
+            server_ssl.quit()
         print(f"[Password Reset Dispatcher] Successfully sent reset email to {to_email}!")
         return True
     except Exception as e:

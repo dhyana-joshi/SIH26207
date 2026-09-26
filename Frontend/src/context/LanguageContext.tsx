@@ -11,8 +11,12 @@ export interface LanguageOption {
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
-  { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી', flag: '🇮🇳' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', flag: '🇮🇳' },
+  { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', flag: '🇮🇳' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇮🇳' },
 ];
 
 export const DAYS_DICT: Record<string, { gu: string; hi: string; en: string }> = {
@@ -381,6 +385,240 @@ export const GLOBAL_PHRASES: Record<string, { gu: string; hi: string }> = {
   'Forgot password?': { gu: 'પાસવર્ડ ભૂલી ગયા છો?', hi: 'पासवर्ड भूल गए?' },
   'Don\'t have an account?': { gu: 'ખાતું નથી?', hi: 'खाता नहीं है?' },
   'Already have an account?': { gu: 'પહેલેથી જ ખાતું છે?', hi: 'पहले से खाता है?' },
+
+  // Student Overview, Pathways, Learning & Mentoring extra phrases
+  'Dual-Track Progress Breakdown': { gu: 'ડ્યુઅલ-ટ્રેક પ્રગતિ વિશ્લેષણ', hi: 'दोहरा अध्ययन पथ प्रगति विवरण' },
+  'Balancing college requirements with extra personal skills.': { gu: 'કોલેજ અભ્યાસક્રમ અને વ્યક્તિગત કૌશલ્યો વચ્ચે સંતુલન.', hi: 'कॉलेज की आवश्यकताओं और अतिरिक्त व्यक्तिगत कौशलों के बीच संतुलन।' },
+  'Explore Roadmaps →': { gu: 'રોડમેપ્સ જુઓ →', hi: 'रोडमैप देखें →' },
+  'Study Actions': { gu: 'અભ્યાસ પગલાં', hi: 'अध्ययन कार्य' },
+  'Daily Syllabus Update': { gu: 'દૈનિક અભ્યાસક્રમ અપડેટ', hi: 'दैनिक पाठ्यक्रम अपडेट' },
+  'Log topics finished today': { gu: 'આજે પૂર્ણ કરેલા વિષયો નોંધો', hi: 'आज पूरे किए गए विषय दर्ज करें' },
+  'AI Timetable Adjuster': { gu: 'AI સમયપત્રક સંયોજક', hi: 'AI समय सारणी समायोजक' },
+  'Add sports/hobbies without conflict': { gu: 'રમતગમત અને શોખ સમયપત્રકમાં ઉમેરો', hi: 'बिना टकराव खेलकूद/शौक जोड़ें' },
+  'Ask College Faculty': { gu: 'કોલેજ ફેકલ્ટીને પૂછો', hi: 'कॉलेज संकाय से पूछें' },
+  'Clear academic doubts': { gu: 'શૈક્ષણિક શંકાઓનું નિવારણ કરો', hi: 'शैक्षणिक शंकाओं का समाधान करें' },
+  'Engage with university researchers': { gu: 'યુનિવર્સિટી સંશોધકો સાથે જોડાઓ', hi: 'विश्वविद्यालय के शोधकर्ताओं से जुड़ें' },
+  'Potential & Effort Index': { gu: 'ક્ષમતા અને પ્રયાસ સૂચકાંક', hi: 'क्षमता और प्रयास सूचकांक' },
+  'Daily Log Consistency Streak': { gu: 'દૈનિક લોગ સતતતા', hi: 'दैनिक लॉग निरंतरता स्ट्रीक' },
+  'Practice-to-Exam Gain': { gu: 'પ્રેક્ટિસથી પરીક્ષામાં સુધારો', hi: 'अभ्यास से परीक्षा में सुधार' },
+  'Track 2 Extra Hours Logged': { gu: 'ટ્રેક ૨ વધારાના કલાકો', hi: 'ट्रैक 2 अतिरिक्त घंटे दर्ज' },
+  'Interactive Multilingual & Visual/Practical Learning': { gu: 'ઇન્ટરેક્ટિવ બહુભાષી અને દ્રશ્ય/પ્રાયોગિક શિક્ષણ', hi: 'इंटरैक्टिव बहुभाषी और दृश्य/व्यावहारिक शिक्षण' },
+  'Interactive calculus and differential geometry visualizers, 2D matrix transformation sandboxes, algorithms, and multilingual concept breakdowns.': { gu: 'ઇન્ટરેક્ટિવ કલનશાસ્ત્ર, 2D શ્રેણિક રૂપાંતરણ, અલ્ગોરિધમ્સ અને બહુભાષી ખ્યાલ સમજૂતી.', hi: 'इंटरैक्टिव कैलकुलस, 2D मैट्रिक्स रूपांतरण, एल्गोरिदम और बहुभाषी अवधारणा विवरण।' },
+  'Language:': { gu: 'ભાષા:', hi: 'भाषा:' },
+  '📈 Calculus & Tangent Explorer': { gu: '📈 કલનશાસ્ત્ર અને સ્પર્શક વિઝ્યુલાઇઝર', hi: '📈 कैलकुलस और स्पर्शरेखा एक्सप्लोरर' },
+  '🔄 2D Matrix Transformation Sandbox': { gu: '🔄 2D શ્રેણિક રૂપાંતરણ પ્રયોગશાળા', hi: '🔄 2D मैट्रिक्स रूपांतरण प्रयोगशाला' },
+  '⚡ Algorithms & System Sandboxes': { gu: '⚡ અલ્ગોરિધમ્સ અને સિસ્ટમ પ્રયોગશાળા', hi: '⚡ एल्गोरिदम और सिस्टम प्रयोगशाला' },
+  '🌐 Multilingual Concept Glossary': { gu: '🌐 બહુભાષી તકનીકી શબ્દકોશ', hi: '🌐 बहुभाषी तकनीकी शब्दकोश' },
+  'Interactive Calculus & Rate of Change Visualizer': { gu: 'ઇન્ટરેક્ટિવ કલનશાસ્ત્ર અને પરિવર્તન દર વિઝ્યુલાઇઝર', hi: 'इंटरैक्टिव कैलकुलस और परिवर्तन दर विज़ुअलाइज़र' },
+  'Live Analytical Calculations': { gu: 'લાઇવ ગાણિતિક ગણતરીઓ', hi: 'लाइव विश्लेषणात्मक गणनाएं' },
+  'Gradient Descent & Backpropagation': { gu: 'ગ્રેડિયન્ટ ડિસેન્ટ અને બેકપ્રોપેગેશન', hi: 'ग्रेडिएंट डिसेंट और बैकप्रोपेगेशन' },
+  '2D Linear Transformation & Determinant Geometry': { gu: '2D સુરેખ રૂપાંતરણ અને નિશ્ચાયક ભૂમિતિ', hi: '2D रैखिक रूपांतरण और सारणिक ज्यामिति' },
+  'Transformation Matrix A': { gu: 'રૂપાંતરણ શ્રેણિક A', hi: 'रूपांतरण मैट्रिक्स A' },
+  'Interactive Binary Search Tree (BST)': { gu: 'ઇન્ટરેક્ટિવ દ્વિ-અંકી શોધ વૃક્ષ (BST)', hi: 'इंटरैक्टिव बाइनरी सर्च ट्री (BST)' },
+  'Interactive LRU Cache Simulator': { gu: 'ઇન્ટરેક્ટિવ LRU કેશ સિમ્યુલેટર', hi: 'इंटरैक्टिव LRU कैश सिम्युलेटर' },
+  'Multilingual Technical & Mathematical Dictionary': { gu: 'બહુભાષી તકનીકી અને ગાણિતિક શબ્દકોશ', hi: 'बहुभाषी तकनीकी और गणितीय शब्दकोश' },
+  'Institute Mentoring & Academic Queries': { gu: 'સંસ્થા માર્ગદર્શન અને શૈક્ષણિક પ્રશ્નો', hi: 'संस्थान परामर्श और शैक्षणिक प्रश्न' },
+  '+ Ask Faculty a Question': { gu: '+ ફેકલ્ટીને પ્રશ્ન પૂછો', hi: '+ संकाय से प्रश्न पूछें' },
+  'Your Queries & Faculty Responses': { gu: 'તમારા પ્રશ્નો અને ફેકલ્ટીના જવાબો', hi: 'आपके प्रश्न और संकाय के उत्तर' },
+};
+
+const EXTRA_LANG_PHRASES: Record<'mr' | 'ta' | 'te' | 'bn', Record<string, string>> = {
+  mr: {
+    'VidyaSarthi': 'विद्यासारथी',
+    'Student Portal': 'विद्यार्थी पोर्टल',
+    'Institute Portal': 'संस्था पोर्टल',
+    'Academician Portal': 'शिक्षणतज्ज्ञ पोर्टल',
+    'Log in': 'लॉग इन',
+    'Log out': 'लॉग आउट',
+    'Sign out': 'लॉग आउट',
+    'My Portal': 'माझे पोर्टल',
+    'Notifications': 'सूचना',
+    'Dashboard Overview': 'डॅशबोर्ड आढावा',
+    'Overview': 'आढावा',
+    'Dual-Track Roadmaps': 'दुहेरी अभ्यास मार्ग',
+    'Syllabus & Fit Score': 'अभ्यासक्रम आणि फिट स्कोर',
+    'AI Schedule': 'AI वेळापत्रक',
+    'Targeted Practice': 'लक्षित सराव',
+    'Multilingual & Visual': 'बहुभाषिक आणि प्रात्यक्षिक',
+    'Faculty Mentoring': 'प्राध्यापक मार्गदर्शन',
+    'Research Papers': 'संशोधन निबंध',
+    'Opportunities': 'संधी',
+    'Academic Profile': 'शैक्षणिक प्रोफाइल',
+    'Student Monitoring': 'विद्यार्थी निरीक्षण',
+    'Marks Management': 'गुण व्यवस्थापन',
+    'Academic Analytics': 'शैक्षणिक विश्लेषण',
+    'Publish Research': 'संशोधन प्रकाशित करा',
+    'My Research Papers': 'माझे संशोधन निबंध',
+    'Student Discussions': 'विद्यार्थी चर्चा',
+    'Knowledge Gaps': 'ज्ञानातील तफावत',
+    'Curriculum': 'अभ्यासक्रम',
+    'Extra Skills': 'अतिरिक्त कौशल्ये',
+    'Assess': 'मूल्यमापन',
+    'Practice': 'सराव',
+    'Research': 'संशोधन',
+    'Excel': 'उत्कृष्टता',
+    'Exam Syllabus Target Meter': 'परीक्षा अभ्यासक्रम लक्ष्य मीटर',
+    'Skill Readiness & Growth Meter': 'कौशल्य तयारी आणि वाढ मीटर',
+    'Educational Potential Index': 'शैक्षणिक क्षमता निर्देशांक',
+    'Syllabus Completed': 'अभ्यासक्रम पूर्ण',
+    'Daily Progress Rate': 'दैनिक प्रगती दर',
+    'Overall Fit Score (Exam Readiness)': 'एकूण फिट स्कोर (परीक्षा तयारी)',
+    'Complete Intake': 'माहिती भरा',
+    "Log Today's Topics": 'आजचे विषय नोंदवा',
+    "Today's Practice Test": 'आजची सराव चाचणी',
+    "Take Today's Practice Test": 'आजची सराव चाचणी द्या',
+    'Generate AI Timetable': 'AI वेळापत्रक तयार करा',
+    'Report Knowledge Gap': 'ज्ञानातील तफावत नोंदवा',
+    'Start Diagnostic Test': 'मूल्यांकन चाचणी सुरू करा',
+    'Language:': 'भाषा:',
+  },
+  ta: {
+    'VidyaSarthi': 'வித்யாசாரதி',
+    'Student Portal': 'மாணவர் தளம்',
+    'Institute Portal': 'நிறுவன தளம்',
+    'Academician Portal': 'கல்வியாளர் தளம்',
+    'Log in': 'உள்நுழைக',
+    'Log out': 'வெளியேறு',
+    'Sign out': 'வெளியேறு',
+    'My Portal': 'எனது தளம்',
+    'Notifications': 'அறிவிப்புகள்',
+    'Dashboard Overview': 'முகப்பு பலகை',
+    'Overview': 'மேலோட்டம்',
+    'Dual-Track Roadmaps': 'இரட்டை கற்றல் பாதைகள்',
+    'Syllabus & Fit Score': 'பாடத்திட்டம் & தகுதி மதிப்பெண்',
+    'AI Schedule': 'AI கால அட்டவணை',
+    'Targeted Practice': 'இலக்கு பயிற்சி',
+    'Multilingual & Visual': 'பன்மொழி & காட்சி கற்றல்',
+    'Faculty Mentoring': 'ஆசிரியர் வழிகாட்டல்',
+    'Research Papers': 'ஆய்வுக் கட்டுரைகள்',
+    'Opportunities': 'வாய்ப்புகள்',
+    'Academic Profile': 'கல்வி சுயவிவரம்',
+    'Student Monitoring': 'மாணவர் கண்காணிப்பு',
+    'Marks Management': 'மதிப்பெண் மேலாண்மை',
+    'Academic Analytics': 'கல்வி பகுப்பாய்வு',
+    'Publish Research': 'ஆய்வை வெளியிடு',
+    'My Research Papers': 'எனது ஆய்வுக் கட்டுரைகள்',
+    'Student Discussions': 'மாணவர் விவாதங்கள்',
+    'Knowledge Gaps': 'கற்றல் இடைவெளிகள்',
+    'Curriculum': 'பாடத்திட்டம்',
+    'Extra Skills': 'கூடுதல் திறன்கள்',
+    'Assess': 'மதிப்பீடு',
+    'Practice': 'பயிற்சி',
+    'Research': 'ஆராய்ச்சி',
+    'Excel': 'சிறப்பு',
+    'Exam Syllabus Target Meter': 'தேர்வு பாடத்திட்ட இலக்கு மீட்டர்',
+    'Skill Readiness & Growth Meter': 'திறன் வளர்ச்சி மீட்டர்',
+    'Educational Potential Index': 'கல்வி திறன் குறியீடு',
+    'Syllabus Completed': 'முடிக்கப்பட்ட பாடத்திட்டம்',
+    'Daily Progress Rate': 'தினசரி முன்னேற்ற விகிதம்',
+    'Overall Fit Score (Exam Readiness)': 'மொத்த தேர்வு தயார்நிலை மதிப்பெண்',
+    'Complete Intake': 'விவரங்களை நிரப்புக',
+    "Log Today's Topics": 'இன்றைய பாடங்களை பதிவு செய்',
+    "Today's Practice Test": 'இன்றைய பயிற்சி தேர்வு',
+    "Take Today's Practice Test": 'இன்றைய பயிற்சி தேர்வை எழுது',
+    'Generate AI Timetable': 'AI கால அட்டவணையை உருவாக்கு',
+    'Report Knowledge Gap': 'கற்றல் இடைவெளியை அறிவி',
+    'Start Diagnostic Test': 'மதிப்பீட்டு தேர்வை தொடங்கு',
+    'Language:': 'மொழி:',
+  },
+  te: {
+    'VidyaSarthi': 'విద్యాసారథి',
+    'Student Portal': 'విద్యార్థి పోర్టల్',
+    'Institute Portal': 'సంస్థ పోర్టల్',
+    'Academician Portal': 'విద్యావేత్త పోర్టల్',
+    'Log in': 'లాగిన్',
+    'Log out': 'లాగౌట్',
+    'Sign out': 'లాగౌట్',
+    'My Portal': 'నా పోర్టల్',
+    'Notifications': 'నోటిఫికేషన్లు',
+    'Dashboard Overview': 'డ్యాష్‌బోర్డ్ అవలోకనం',
+    'Overview': 'అవలోకనం',
+    'Dual-Track Roadmaps': 'ద్వంద్వ అభ్యాస మార్గాలు',
+    'Syllabus & Fit Score': 'సిలబస్ & ఫిట్ స్కోర్',
+    'AI Schedule': 'AI టైమ్‌టేబుల్',
+    'Targeted Practice': 'లక్షిత ప్రాక్టీస్',
+    'Multilingual & Visual': 'బహుభాషా & దృశ్య అభ్యాసం',
+    'Faculty Mentoring': 'అధ్యాపక మార్గదర్శకత్వం',
+    'Research Papers': 'పరిశోధనా పత్రాలు',
+    'Opportunities': 'అవకాశాలు',
+    'Academic Profile': 'విద్యా ప్రొఫైల్',
+    'Student Monitoring': 'విద్యార్థి పర్యవేక్షణ',
+    'Marks Management': 'మార్కుల నిర్వహణ',
+    'Academic Analytics': 'విద్యా విశ్లేషణలు',
+    'Publish Research': 'పరిశోధనను ప్రచురించండి',
+    'My Research Papers': 'నా పరిశోధనా పత్రాలు',
+    'Student Discussions': 'విద్యార్థి చర్చలు',
+    'Knowledge Gaps': 'జ్ఞాన అంతరాలు',
+    'Curriculum': 'పాఠ్యప్రణాళిక',
+    'Extra Skills': 'అదనపు నైపుణ్యాలు',
+    'Assess': 'మూల్యాంకనం',
+    'Practice': 'సాధన',
+    'Research': 'పరిశోధన',
+    'Excel': 'రాణించు',
+    'Exam Syllabus Target Meter': 'పరీక్ష సిలబస్ లక్ష్య మీటర్',
+    'Skill Readiness & Growth Meter': 'నైపుణ్య వృద్ధి మీటర్',
+    'Educational Potential Index': 'విద్యా సామర్థ్య సూచిక',
+    'Syllabus Completed': 'పూర్తయిన సిలబస్',
+    'Daily Progress Rate': 'రోజువారీ పురోగతి రేటు',
+    'Overall Fit Score (Exam Readiness)': 'మొత్తం ఫిట్ స్కోర్ (పరీక్ష సంసిద్ధత)',
+    'Complete Intake': 'వివరాలు నమోదు చేయండి',
+    "Log Today's Topics": 'నేటి అంశాలను నమోదు చేయండి',
+    "Today's Practice Test": 'నేటి ప్రాక్టీస్ టెస్ట్',
+    "Take Today's Practice Test": 'నేటి ప్రాక్టీస్ టెస్ట్ రాయండి',
+    'Generate AI Timetable': 'AI టైమ్‌టేబుల్ రూపొందించండి',
+    'Report Knowledge Gap': 'జ్ఞాన అంతరాన్ని నివేదించండి',
+    'Start Diagnostic Test': 'నిర్ధారణ పరీక్షను ప్రారంభించండి',
+    'Language:': 'భాష:',
+  },
+  bn: {
+    'VidyaSarthi': 'বিদ্যাসারথি',
+    'Student Portal': 'শিক্ষার্থী পোর্টাল',
+    'Institute Portal': 'প্রতিষ্ঠান পোর্টাল',
+    'Academician Portal': 'শিক্ষাবিদ পোর্টাল',
+    'Log in': 'লগ ইন',
+    'Log out': 'লগ আউট',
+    'Sign out': 'লগ আউট',
+    'My Portal': 'আমার পোর্টাল',
+    'Notifications': 'বিজ্ঞপ্তি',
+    'Dashboard Overview': 'ড্যাশবোর্ড ওভারভিউ',
+    'Overview': 'ওভারভিউ',
+    'Dual-Track Roadmaps': 'দ্বৈত শিক্ষা পথ',
+    'Syllabus & Fit Score': 'সিলেবাস ও ফিট স্কোর',
+    'AI Schedule': 'AI সময়সূচী',
+    'Targeted Practice': 'লক্ষ্যযুক্ত অনুশীলন',
+    'Multilingual & Visual': 'বহুভাষিক ও ভিজ্যুয়াল শিক্ষা',
+    'Faculty Mentoring': 'শিক্ষক পরামর্শ',
+    'Research Papers': 'গবেষণা পত্র',
+    'Opportunities': 'সুযোগসমূহ',
+    'Academic Profile': 'একাডেমিক প্রোফাইল',
+    'Student Monitoring': 'শিক্ষার্থী পর্যবেক্ষণ',
+    'Marks Management': 'নম্বর ব্যবস্থাপনা',
+    'Academic Analytics': 'একাডেমিক বিশ্লেষণ',
+    'Publish Research': 'গবেষণা প্রকাশ করুন',
+    'My Research Papers': 'আমার গবেষণা পত্র',
+    'Student Discussions': 'শিক্ষার্থী আলোচনা',
+    'Knowledge Gaps': 'জ্ঞানের ঘাটতি',
+    'Curriculum': 'পাঠ্যক্রম',
+    'Extra Skills': 'অতিরিক্ত দক্ষতা',
+    'Assess': 'মূল্যায়ন',
+    'Practice': 'অনুশীলন',
+    'Research': 'গবেষণা',
+    'Excel': 'উৎকর্ষ',
+    'Exam Syllabus Target Meter': 'পরীক্ষা সিলেবাস লক্ষ্য মিটার',
+    'Skill Readiness & Growth Meter': 'দক্ষতা বৃদ্ধি মিটার',
+    'Educational Potential Index': 'শিক্ষাগত সম্ভাবনা সূচক',
+    'Syllabus Completed': 'সম্পন্ন সিলেবাস',
+    'Daily Progress Rate': 'দৈনিক অগ্রগতির হার',
+    'Overall Fit Score (Exam Readiness)': 'সামগ্রিক ফিট স্কোর (পরীক্ষা প্রস্তুতি)',
+    'Complete Intake': 'তথ্য পূরণ করুন',
+    "Log Today's Topics": 'আজকের বিষয় নথিভুক্ত করুন',
+    "Today's Practice Test": 'আজকের অনুশীলন পরীক্ষা',
+    "Take Today's Practice Test": 'আজকের অনুশীলন পরীক্ষা দিন',
+    'Generate AI Timetable': 'AI সময়সূচী তৈরি করুন',
+    'Report Knowledge Gap': 'জ্ঞানের ঘাটতি জানান',
+    'Start Diagnostic Test': 'ডায়াগনস্টিক পরীক্ষা শুরু করুন',
+    'Language:': 'ভাষা:',
+  },
 };
 
 const TRANSLATIONS: Record<'en' | 'gu' | 'hi', Record<string, string>> & Partial<Record<SupportedLanguage, Record<string, string>>> = {
@@ -612,7 +850,7 @@ const TRANSLATIONS: Record<'en' | 'gu' | 'hi', Record<string, string>> & Partial
     // Meters & Key Metrics
     'meter.exam_target': 'પરીક્ષા અભ્યાસક્રમ લક્ષ્ય મીટર',
     'meter.skill_growth': 'કૌશલ્ય સજ્જતા અને વૃદ્ધિ મીટર',
-    'meter.potential_index': 'શૈક્ષણિક ક્ષમતા સૂચકાંક',
+    'meter.potential_index': 'શૈક્ષણિક ક્ષમતા સૂचકાંક',
     'meter.syllabus_covered': 'અભ્યાસક્રમ પૂર્ણ',
     'meter.progress_rate': 'દૈનિક પ્રગતિ દર',
     'meter.overall_fit': 'સમગ્ર ફિટ સ્કોર (પરીક્ષા સજ્જતા)',
@@ -778,6 +1016,34 @@ const TRANSLATIONS: Record<'en' | 'gu' | 'hi', Record<string, string>> & Partial
   },
 };
 
+// Build reverse lookup map from any translated string back to canonical English string
+const REVERSE_TO_EN_MAP = new Map<string, string>();
+(() => {
+  Object.entries(TRANSLATIONS.en).forEach(([key, enVal]) => {
+    const guVal = TRANSLATIONS.gu?.[key];
+    const hiVal = TRANSLATIONS.hi?.[key];
+    if (guVal) REVERSE_TO_EN_MAP.set(guVal.trim(), enVal);
+    if (hiVal) REVERSE_TO_EN_MAP.set(hiVal.trim(), enVal);
+  });
+  Object.entries(GLOBAL_PHRASES).forEach(([enText, dict]) => {
+    if (dict.gu) REVERSE_TO_EN_MAP.set(dict.gu.trim(), enText);
+    if (dict.hi) REVERSE_TO_EN_MAP.set(dict.hi.trim(), enText);
+  });
+  (['mr', 'ta', 'te', 'bn'] as const).forEach((code) => {
+    Object.entries(EXTRA_LANG_PHRASES[code]).forEach(([enText, transText]) => {
+      REVERSE_TO_EN_MAP.set(transText.trim(), enText);
+    });
+  });
+  Object.values(DAYS_DICT).forEach((d) => {
+    REVERSE_TO_EN_MAP.set(d.gu.trim(), d.en);
+    REVERSE_TO_EN_MAP.set(d.hi.trim(), d.en);
+  });
+  Object.values(MONTHS_DICT).forEach((m) => {
+    REVERSE_TO_EN_MAP.set(m.gu.trim(), m.en);
+    REVERSE_TO_EN_MAP.set(m.hi.trim(), m.en);
+  });
+})();
+
 // =========================================================================
 // TRANSLATION HELPER FUNCTIONS
 // =========================================================================
@@ -792,13 +1058,24 @@ export const resolveTranslation = (
   const params = typeof fallbackOrParams === 'object' ? fallbackOrParams : undefined;
 
   if (targetLang === 'en') {
-    let result = TRANSLATIONS.en[textOrKey] || fallback || textOrKey;
+    let result = TRANSLATIONS.en[textOrKey] || fallback || REVERSE_TO_EN_MAP.get(textOrKey.trim()) || textOrKey;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         result = result.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
       });
     }
     return result;
+  }
+
+  const trimmed = textOrKey.trim();
+
+  // Handle Marathi, Tamil, Telugu, Bengali
+  if (targetLang === 'mr' || targetLang === 'ta' || targetLang === 'te' || targetLang === 'bn') {
+    const extraDict = EXTRA_LANG_PHRASES[targetLang];
+    const enValue = TRANSLATIONS.en[textOrKey] || fallback || trimmed;
+    if (extraDict[enValue]) return extraDict[enValue];
+    if (extraDict[trimmed]) return extraDict[trimmed];
+    return enValue;
   }
 
   // 1. Direct key match in TRANSLATIONS
@@ -814,7 +1091,6 @@ export const resolveTranslation = (
   }
 
   const langKey = targetLang === 'gu' || targetLang === 'hi' ? targetLang : null;
-  const trimmed = textOrKey.trim();
 
   if (langKey) {
     // 2. Exact match in GLOBAL_PHRASES
@@ -955,17 +1231,20 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 // DOM Translation Cache to remember original English text of nodes
 const originalTextMap = new WeakMap<Node, string>();
+const lastAppliedTextMap = new WeakMap<Node, string>();
 const originalAttrMap = new WeakMap<Element, Record<string, string>>();
+
+const VALID_LANG_CODES: Set<SupportedLanguage> = new Set(['en', 'hi', 'gu', 'mr', 'ta', 'te', 'bn']);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<SupportedLanguage>(() => {
     const saved = localStorage.getItem('vidyasarthi_lang') as SupportedLanguage;
-    if (saved && (saved === 'en' || saved === 'gu' || saved === 'hi')) return saved;
+    if (saved && VALID_LANG_CODES.has(saved)) return saved;
     return 'en';
   });
 
   const setLanguage = (lang: SupportedLanguage) => {
-    if (lang === 'en' || lang === 'gu' || lang === 'hi') {
+    if (VALID_LANG_CODES.has(lang)) {
       setLanguageState(lang);
       localStorage.setItem('vidyasarthi_lang', lang);
     }
@@ -1010,7 +1289,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const formatDate = (date: string | Date | number, options?: Intl.DateTimeFormatOptions): string => {
     try {
       const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
-      const locale = language === 'gu' ? 'gu-IN' : language === 'hi' ? 'hi-IN' : 'en-IN';
+      const localeMap: Record<SupportedLanguage, string> = {
+        en: 'en-IN',
+        hi: 'hi-IN',
+        gu: 'gu-IN',
+        mr: 'mr-IN',
+        ta: 'ta-IN',
+        te: 'te-IN',
+        bn: 'bn-IN'
+      };
+      const locale = localeMap[language] || 'en-IN';
       return new Intl.DateTimeFormat(locale, options || { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
     } catch {
       return String(date);
@@ -1023,14 +1311,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     let res = timeStr;
     if (language === 'gu') {
       res = res.replace(/AM/gi, 'સવારે').replace(/PM/gi, 'સાંજે');
-    } else if (language === 'hi') {
+    } else if (language === 'hi' || language === 'mr') {
       res = res.replace(/AM/gi, 'सुबह').replace(/PM/gi, 'शाम');
     }
     return res;
   };
 
   // =========================================================================
-  // AUTOMATIC FULL DOM TRANSLATOR EFFECT (ZERO LEFTOVER ENGLISH)
+  // AUTOMATIC FULL DOM TRANSLATOR EFFECT
   // =========================================================================
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -1040,35 +1328,52 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     // Helper to translate an element and all child text nodes
     const processNode = (node: Node) => {
-      // Handle text nodes
       if (node.nodeType === Node.TEXT_NODE) {
         const textNode = node as Text;
         const text = textNode.nodeValue || '';
         const trimmed = text.trim();
         if (!trimmed || trimmed.length === 0) return;
 
-        // Skip script and style tags
-        const parentTag = textNode.parentElement?.tagName?.toLowerCase();
-        if (parentTag === 'script' || parentTag === 'style') return;
+        const parentEl = textNode.parentElement;
+        const parentTag = parentEl?.tagName?.toLowerCase();
+        if (parentTag === 'script' || parentTag === 'style' || parentTag === 'option') return;
+        if (parentEl?.closest('[data-no-translate="true"]')) return;
+
+        const leadingWs = text.match(/^\s*/)?.[0] || '';
+        const trailingWs = text.match(/\s*$/)?.[0] || '';
+
+        // Determine canonical English source text even if React rendered a translated string via t()
+        let canonicalEn = originalTextMap.get(textNode);
+        const lastApplied = lastAppliedTextMap.get(textNode);
+
+        if (!canonicalEn || (lastApplied !== undefined && text !== lastApplied)) {
+          const reverseLookup = REVERSE_TO_EN_MAP.get(trimmed);
+          canonicalEn = reverseLookup ? (leadingWs + reverseLookup + trailingWs) : text;
+          originalTextMap.set(textNode, canonicalEn);
+        } else {
+          // Ensure canonicalEn itself is normalized if it was previously saved while in non-English
+          const savedTrimmed = canonicalEn.trim();
+          const reverseLookup = REVERSE_TO_EN_MAP.get(savedTrimmed);
+          if (reverseLookup) {
+            canonicalEn = leadingWs + reverseLookup + trailingWs;
+            originalTextMap.set(textNode, canonicalEn);
+          }
+        }
 
         if (currentLang === 'en') {
-          if (originalTextMap.has(textNode)) {
-            textNode.nodeValue = originalTextMap.get(textNode)!;
+          if (textNode.nodeValue !== canonicalEn) {
+            textNode.nodeValue = canonicalEn;
           }
+          lastAppliedTextMap.set(textNode, canonicalEn);
         } else {
-          let original = originalTextMap.get(textNode);
-          if (!original) {
-            original = text;
-            originalTextMap.set(textNode, original);
-          }
-          const origTrimmed = original.trim();
+          const origTrimmed = canonicalEn.trim();
           if (origTrimmed.length > 0) {
             const translated = resolveTranslation(origTrimmed, currentLang);
-            if (translated !== origTrimmed) {
-              const leadingWs = original.match(/^\s*/)?.[0] || '';
-              const trailingWs = original.match(/\s*$/)?.[0] || '';
-              textNode.nodeValue = leadingWs + translated + trailingWs;
+            const nextVal = translated !== origTrimmed ? (leadingWs + translated + trailingWs) : canonicalEn;
+            if (textNode.nodeValue !== nextVal) {
+              textNode.nodeValue = nextVal;
             }
+            lastAppliedTextMap.set(textNode, nextVal);
           }
         }
         return;
@@ -1079,6 +1384,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const el = node as Element;
         const tag = el.tagName.toLowerCase();
         if (tag === 'script' || tag === 'style') return;
+        if (el.getAttribute('data-no-translate') === 'true') return;
 
         // Placeholders on input / textarea
         if (el.hasAttribute('placeholder')) {
@@ -1095,16 +1401,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               originalAttrMap.set(el, saved);
             }
             if (!saved.placeholder) {
-              saved.placeholder = ph;
+              saved.placeholder = REVERSE_TO_EN_MAP.get(ph.trim()) || ph;
             }
             const translated = resolveTranslation(saved.placeholder.trim(), currentLang);
-            if (translated !== saved.placeholder.trim()) {
-              el.setAttribute('placeholder', translated);
-            }
+            el.setAttribute('placeholder', translated);
           }
         }
 
-        // Titles and aria-labels
+        // Titles
         if (el.hasAttribute('title')) {
           const title = el.getAttribute('title') || '';
           if (currentLang === 'en') {
@@ -1113,9 +1417,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           } else {
             let saved = originalAttrMap.get(el);
             if (!saved) { saved = {}; originalAttrMap.set(el, saved); }
-            if (!saved.title) saved.title = title;
+            if (!saved.title) saved.title = REVERSE_TO_EN_MAP.get(title.trim()) || title;
             const translated = resolveTranslation(saved.title.trim(), currentLang);
-            if (translated !== saved.title.trim()) el.setAttribute('title', translated);
+            el.setAttribute('title', translated);
           }
         }
 
@@ -1126,7 +1430,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
 
-    // Run translation on document body
     let isProcessing = false;
     const runTranslation = () => {
       if (isProcessing) return;
@@ -1140,7 +1443,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     runTranslation();
 
-    // Set up MutationObserver to translate any newly mounted nodes or DOM mutations
     const observer = new MutationObserver((mutations) => {
       if (isProcessing) return;
       isProcessing = true;

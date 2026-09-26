@@ -4581,7 +4581,7 @@ export const StudentLearningView: React.FC = () => {
     if (langMap[language] && langMap[language] !== selectedLang) {
       setSelectedLang(langMap[language]);
     }
-  }, [language]);
+  }, [language, selectedLang]);
 
   const handleLanguageChange = (langName: string) => {
     setSelectedLang(langName);
@@ -4597,7 +4597,365 @@ export const StudentLearningView: React.FC = () => {
     if (codeMap[langName]) {
       setLanguage(codeMap[langName]);
     }
+    studentApi.updateProfile({ preferred_language: langName }).catch(() => {});
   };
+
+  // Localized UI labels for all 7 languages inside StudentLearningView
+  const LEARNING_UI_I18N: Record<string, {
+    pageTitle: string;
+    pageDesc: string;
+    langLabel: string;
+    tabCalculus: string;
+    tabMatrix: string;
+    tabAlgorithms: string;
+    tabMultilingual: string;
+    calcTitle: string;
+    calcDesc: string;
+    parabola: string;
+    cubic: string;
+    clickHint: string;
+    selectPoint: string;
+    liveCalcTitle: string;
+    instSlope: string;
+    defIntegral: string;
+    tangentEqAt: string;
+    aiLinkBadge: string;
+    aiLinkTitle: string;
+    aiLinkDesc1: string;
+    aiLinkDesc2: string;
+    matrixTitle: string;
+    matrixDesc: string;
+    matrixBoxTitle: string;
+    detCalcTitle: string;
+    singularMsg: string;
+    invertedMsg: string;
+    preserveMsg: string;
+    cgBadge: string;
+    cgTitle: string;
+    cgDesc: string;
+    bstTitle: string;
+    bstDesc: string;
+    insertNode: string;
+    inOrderLabel: string;
+    lruTitle: string;
+    lruDesc: string;
+    liveCacheMem: string;
+    opStream: string;
+    dictTitle: string;
+    dictDesc: string;
+    activeDialect: string;
+  }> = {
+    English: {
+      pageTitle: 'Interactive Multilingual & Visual/Practical Learning',
+      pageDesc: 'Interactive calculus and differential geometry visualizers, 2D matrix transformation sandboxes, algorithms, and multilingual concept breakdowns.',
+      langLabel: 'Language:',
+      tabCalculus: '📈 Calculus & Tangent Explorer',
+      tabMatrix: '🔄 2D Matrix Transformation Sandbox',
+      tabAlgorithms: '⚡ Algorithms & System Sandboxes',
+      tabMultilingual: '🌐 Multilingual Concept Glossary',
+      calcTitle: 'Interactive Calculus & Rate of Change Visualizer',
+      calcDesc: 'Move the slider to observe how instantaneous slope (derivative) and accumulated area (integral) change in real time.',
+      parabola: 'Parabola',
+      cubic: 'Cubic',
+      clickHint: 'Interactive: Click anywhere on graph',
+      selectPoint: 'Select Input Point x₀:',
+      liveCalcTitle: 'Live Analytical Calculations',
+      instSlope: 'Instantaneous Slope',
+      defIntegral: 'Definite Integral',
+      tangentEqAt: 'Tangent Line Equation at',
+      aiLinkBadge: 'AI & Machine Learning Link',
+      aiLinkTitle: 'Gradient Descent & Backpropagation',
+      aiLinkDesc1: 'In neural networks, the loss function Loss(w) is minimized by stepping opposite to the derivative:',
+      aiLinkDesc2: "Notice that when f'(x) = 0 (at local extrema), the tangent is completely horizontal and weight updates settle at minimum error!",
+      matrixTitle: '2D Linear Transformation & Determinant Geometry',
+      matrixDesc: 'Watch basis vectors î and ĵ transform space. The determinant det(A) represents the signed area scaling factor.',
+      matrixBoxTitle: 'Transformation Matrix A',
+      detCalcTitle: 'Determinant Calculation:',
+      singularMsg: '⚠️ Singular Matrix (Rank 1): 2D space collapsed into a 1D line! No inverse matrix exists.',
+      invertedMsg: '🔄 Orientation Inverted (Negative Determinant): Coordinate space has been mirrored/flipped.',
+      preserveMsg: '✓ Preserves Orientation: Scales unit area by factor of',
+      cgBadge: 'Computer Graphics & Vision Link',
+      cgTitle: '3D Camera Viewports & GPU Shaders',
+      cgDesc: 'Every video game and computer vision model transforms millions of 3D polygon coordinates into 2D screen pixels per second by multiplying vertices with Model-View-Projection (MVP) 4x4 affine matrices!',
+      bstTitle: 'Interactive Binary Search Tree (BST)',
+      bstDesc: 'Add numbers to watch binary partitioning maintain the in-order invariant in O(log n) time.',
+      insertNode: 'Insert Node',
+      inOrderLabel: 'In-Order Sorted Traversal:',
+      lruTitle: 'Interactive LRU Cache Simulator',
+      lruDesc: 'Doubly linked list + hash map achieving O(1) reads and writes with capacity 3.',
+      liveCacheMem: 'Live Cache Memory (MRU → LRU):',
+      opStream: 'Operation Stream:',
+      dictTitle: 'Multilingual Technical & Mathematical Dictionary',
+      dictDesc: 'Demystifying advanced engineering, mathematical, and algorithmic principles in your regional mother tongue.',
+      activeDialect: 'Active Dialect:'
+    },
+    Hindi: {
+      pageTitle: 'इंटरैक्टिव बहुभाषी और दृश्य/व्यावहारिक शिक्षा',
+      pageDesc: 'इंटरैक्टिव कैलकुलस और अवकल ज्यामिति विज़ुअलाइज़र, 2D आव्यूह रूपांतरण सैंडबॉक्स, एल्गोरिदम और मातृभाषा में अवधारणा विश्लेषण।',
+      langLabel: 'भाषा:',
+      tabCalculus: '📈 कैलकुलस और स्पर्शरेखा एक्सप्लोरर',
+      tabMatrix: '🔄 2D आव्यूह रूपांतरण सैंडबॉक्स',
+      tabAlgorithms: '⚡ एल्गोरिदम और सिस्टम सैंडबॉक्स',
+      tabMultilingual: '🌐 बहुभाषी अवधारणा शब्दकोश',
+      calcTitle: 'इंटरैक्टिव कैलकुलस और परिवर्तन दर विज़ुअलाइज़र',
+      calcDesc: 'वास्तविक समय में तात्कालिक ढलान (अवकलन) और संचित क्षेत्रफल (समाकलन) में बदलाव देखने के लिए स्लाइडर चलाएं।',
+      parabola: 'परवलय (Parabola)',
+      cubic: 'त्रिघात (Cubic)',
+      clickHint: 'इंटरैक्टिव: ग्राफ़ पर कहीं भी क्लिक करें',
+      selectPoint: 'इनपुट बिंदु x₀ चुनें:',
+      liveCalcTitle: 'लाइव विश्लेषणात्मक गणनाएँ',
+      instSlope: 'तात्कालिक ढलान',
+      defIntegral: 'निश्चित समाकलन',
+      tangentEqAt: 'स्पर्शरेखा समीकरण बिंदु',
+      aiLinkBadge: 'AI और मशीन लर्निंग लिंक',
+      aiLinkTitle: 'ग्रेडिएंट डिसेंट और बैकप्रोपैगेशन',
+      aiLinkDesc1: 'न्यूरल नेटवर्क में, लॉस फंक्शन Loss(w) को अवकलन की विपरीत दिशा में कदम बढ़ाकर न्यूनतम किया जाता है:',
+      aiLinkDesc2: "ध्यान दें कि जब f'(x) = 0 होता है, तो स्पर्शरेखा क्षैतिज होती है और न्यूनतम त्रुटि प्राप्त होती है!",
+      matrixTitle: '2D रैखिक रूपांतरण और सारणिक (Determinant) ज्यामिति',
+      matrixDesc: 'आधार सदिश î और ĵ को स्थान बदलते हुए देखें। सारणिक det(A) क्षेत्रफल स्केलिंग गुणांक दर्शाता है।',
+      matrixBoxTitle: 'रूपांतरण आव्यूह A',
+      detCalcTitle: 'सारणिक (Determinant) गणना:',
+      singularMsg: '⚠️ अव्युत्क्रमणीय आव्यूह (Rank 1): 2D स्थान 1D रेखा में सिमट गया है! कोई व्युत्क्रम अस्तित्व में नहीं है।',
+      invertedMsg: '🔄 अभिविन्यास उलट गया (ऋणात्मक सारणिक): निर्देशांक स्थान दर्पण/फ्लिप हो गया है।',
+      preserveMsg: '✓ अभिविन्यास सुरक्षित रखता है: इकाई क्षेत्रफल का गुणांक',
+      cgBadge: 'कंप्यूटर ग्राफिक्स और विज़न लिंक',
+      cgTitle: '3D कैमरा व्यूपोर्ट और GPU शेडर्स',
+      cgDesc: 'प्रत्येक वीडियो गेम और कंप्यूटर विज़न मॉडल प्रति सेकंड लाखों 3D निर्देशांकों को 4x4 आव्यूह से गुणा करके 2D स्क्रीन पिक्सेल में बदलता है!',
+      bstTitle: 'इंटरैक्टिव बाइनरी सर्च ट्री (BST)',
+      bstDesc: 'O(log n) समय में क्रमबद्ध विभाजन देखने के लिए संख्याएँ जोड़ें।',
+      insertNode: 'नोड जोड़ें',
+      inOrderLabel: 'इन-ऑर्डर क्रमबद्ध ट्रैवर्सल:',
+      lruTitle: 'इंटरैक्टिव LRU कैश सिम्युलेटर',
+      lruDesc: 'डबली लिंक्ड लिस्ट + हैश मैप द्वारा क्षमता 3 के साथ O(1) रीड और राइट।',
+      liveCacheMem: 'लाइव कैश मेमोरी (MRU → LRU):',
+      opStream: 'ऑपरेशन लॉग:',
+      dictTitle: 'बहुभाषी तकनीकी और गणितीय शब्दकोश',
+      dictDesc: 'आपकी क्षेत्रीय मातृभाषा में उन्नत इंजीनियरिंग, गणितीय और एल्गोरिदम सिद्धांतों की सरल व्याख्या।',
+      activeDialect: 'सक्रिय भाषा:'
+    },
+    Gujarati: {
+      pageTitle: 'ઇન્ટરેક્ટિવ બહુભાષી અને વિઝ્યુઅલ/પ્રાયોગિક શિક્ષણ',
+      pageDesc: 'ઇન્ટરેક્ટિવ કલનશાસ્ત્ર (Calculus) વિઝ્યુઅલાઇઝર, 2D શ્રેણિક રૂપાંતરણ સેન્ડબોક્સ, અલ્ગોરિધમ્સ અને માતૃભાષામાં ખ્યાલ સમજૂતી.',
+      langLabel: 'ભાષા:',
+      tabCalculus: '📈 કલનશાસ્ત્ર અને સ્પર્શક એક્સપ્લોરર',
+      tabMatrix: '🔄 2D શ્રેણિક રૂપાંતરણ સેન્ડબોક્સ',
+      tabAlgorithms: '⚡ અલ્ગોરિધમ્સ અને સિસ્ટમ સેન્ડબોક્સ',
+      tabMultilingual: '🌐 બહુભાષી ખ્યાલ શબ્દકોશ',
+      calcTitle: 'ઇન્ટરેક્ટિવ કલનશાસ્ત્ર અને પરિવર્તન દર વિઝ્યુઅલાઇઝર',
+      calcDesc: 'તાત્કાલિક ઢોળાવ (વિકલન) અને સંચિત ક્ષેત્રફળ (સંકલન) માં રીઅલ-ટાઇમ ફેરફાર જોવા માટે સ્લાઇડર ખસેડો.',
+      parabola: 'પરવલય (Parabola)',
+      cubic: 'ત્રિઘાત (Cubic)',
+      clickHint: 'ઇન્ટરેક્ટિવ: ગ્રાફ પર ગમે ત્યાં ક્લિક કરો',
+      selectPoint: 'ઇનપુટ બિંદુ x₀ પસંદ કરો:',
+      liveCalcTitle: 'લાઇવ વિશ્લેષણાત્મક ગણતરીઓ',
+      instSlope: 'તાત્કાલિક ઢોળાવ',
+      defIntegral: 'નિશ્ચિત સંકલન',
+      tangentEqAt: 'સ્પર્શક રેખાનું સમીકરણ',
+      aiLinkBadge: 'AI અને મશીન લર્નિંગ લિંક',
+      aiLinkTitle: 'ગ્રેડિયન્ટ ડિસેન્ટ અને બેકપ્રોપેગેશન',
+      aiLinkDesc1: 'ન્યુરલ નેટવર્કમાં, લોસ ફંક્શન Loss(w) ને વિકલનની વિરુદ્ધ દિશામાં પગલું ભરીને લઘુત્તમ કરવામાં આવે છે:',
+      aiLinkDesc2: "નોંધ કરો કે જ્યારે f'(x) = 0 હોય, ત્યારે સ્પર્શક સમક્ષિતિજ હોય છે અને લઘુત્તમ ભૂલ મળે છે!",
+      matrixTitle: '2D સુરેખ રૂપાંતરણ અને નિશ્ચાયક (Determinant) ભૂમિતિ',
+      matrixDesc: 'એકમ સદિશો î અને ĵ ને અવકાશ બદલતા જુઓ. નિશ્ચાયક det(A) ક્ષેત્રફળ સ્કેલિંગ પરિબળ દર્શાવે છે.',
+      matrixBoxTitle: 'રૂપાંતરણ શ્રેણિક A',
+      detCalcTitle: 'નિશ્ચાયક (Determinant) ગણતરી:',
+      singularMsg: '⚠️ અવ્યુત્ક્રમણીય શ્રેણિક (Rank 1): 2D અવકાશ 1D રેખામાં સંકોચાઈ ગયું છે! વ્યસ્ત શ્રેણિક અસ્તિત્વમાં નથી.',
+      invertedMsg: '🔄 દિશા ઉલટાઈ ગઈ (ઋણ નિશ્ચાયક): યામ અવકાશ પ્રતિબિંબિત/ફ્લિપ થઈ ગયું છે.',
+      preserveMsg: '✓ દિશા જાળવી રાખે છે: એકમ ક્ષેત્રફળનું પ્રમાણ',
+      cgBadge: 'કોમ્પ્યુટર ગ્રાફિક્સ અને વિઝન લિંક',
+      cgTitle: '3D કેમેરા વ્યૂપોર્ટ અને GPU શેડર્સ',
+      cgDesc: 'દરેક વિડિયો ગેમ અને કોમ્પ્યુટર વિઝન મોડેલ લાખો 3D બિંદુઓને 4x4 શ્રેણિક વડે ગુણીને 2D સ્ક્રીન પિક્સેલમાં ફેરવે છે!',
+      bstTitle: 'ઇન્ટરેક્ટિવ બાઇનરી સર્ચ ટ્રી (BST)',
+      bstDesc: 'O(log n) સમયમાં ક્રમબદ્ધ વિભાજન જોવા માટે સંખ્યાઓ ઉમેરો.',
+      insertNode: 'નોડ ઉમેરો',
+      inOrderLabel: 'ઇન-ઓર્ડર ક્રમબદ્ધ ટ્રાવર્સલ:',
+      lruTitle: 'ઇન્ટરેક્ટિવ LRU કેશ સિમ્યુલેટર',
+      lruDesc: 'ડબલી લિંક્ડ લિસ્ટ + હેશ મેપ દ્વારા ક્ષમતા 3 સાથે O(1) રીડ અને રાઇટ.',
+      liveCacheMem: 'લાઇવ કેશ મેમરી (MRU → LRU):',
+      opStream: 'ઓપરેશન લોગ:',
+      dictTitle: 'બહુભાષી તકનીકી અને ગાણિતિક શબ્દકોશ',
+      dictDesc: 'તમારી પ્રાદેશિક માતૃભાષામાં અદ્યતન એન્જિનિયરિંગ, ગાણિતિક અને અલ્ગોરિધમિક સિદ્ધાંતોની સરળ સમજૂતી.',
+      activeDialect: 'સક્રિય ભાષા:'
+    },
+    Marathi: {
+      pageTitle: 'इंटरॅक्टिव्ह बहुभाषिक आणि दृश्य/प्रात्यक्षिक शिक्षण',
+      pageDesc: 'इंटरॅक्टिव्ह कलन (Calculus) व्हिज्युअलायझर, 2D मॅट्रिक्स रूपांतरण सँडबॉक्स, अल्गोरिदम आणि मातृभाषेत संकल्पनांचे स्पष्टीकरण.',
+      langLabel: 'भाषा:',
+      tabCalculus: '📈 कलन आणि स्पर्शिका एक्सप्लोरर',
+      tabMatrix: '🔄 2D मॅट्रिक्स रूपांतरण सँडबॉक्स',
+      tabAlgorithms: '⚡ अल्गोरिदम आणि सिस्टम सँडबॉक्स',
+      tabMultilingual: '🌐 बहुभाषिक संकल्पना शब्दकोश',
+      calcTitle: 'इंटरॅक्टिव्ह कलन आणि बदल दर व्हिज्युअलायझर',
+      calcDesc: 'तात्कालिक उतार (अवकलन) आणि संचित क्षेत्रफळ (समाकलन) मधील बदल पाहण्यासाठी स्लायडर हलवा.',
+      parabola: 'परवलय (Parabola)',
+      cubic: 'घन (Cubic)',
+      clickHint: 'इंटरॅक्टिव्ह: आलेखावर कुठेही क्लिक करा',
+      selectPoint: 'इनपुट बिंदू x₀ निवडा:',
+      liveCalcTitle: 'थेट विश्लेषणात्मक गणना',
+      instSlope: 'तात्कालिक उतार',
+      defIntegral: 'निश्चित समाकलन',
+      tangentEqAt: 'स्पर्शिका रेषेचे समीकरण',
+      aiLinkBadge: 'AI आणि मशीन लर्निंग लिंक',
+      aiLinkTitle: 'ग्रेडियंट डिसेंट आणि बॅकप्रोपगेशन',
+      aiLinkDesc1: 'न्यूरल नेटवर्कमध्ये, लॉस फंक्शन Loss(w) अवकलनाच्या विरुद्ध दिशेने पाऊल टाकून कमी केले जाते:',
+      aiLinkDesc2: "लक्षात घ्या की जेव्हा f'(x) = 0 असते, तेव्हा स्पर्शिका क्षितिजसमांतर असते आणि किमान त्रुटी मिळते!",
+      matrixTitle: '2D रेषीय रूपांतरण आणि निश्चयक (Determinant) भूमिती',
+      matrixDesc: 'मूळ सदिश î आणि ĵ अवकाश कसे बदलतात ते पहा. निश्चयक det(A) क्षेत्रफळ स्केलिंग दर्शवतो.',
+      matrixBoxTitle: 'रूपांतरण मॅट्रिक्स A',
+      detCalcTitle: 'निश्चयक (Determinant) गणना:',
+      singularMsg: '⚠️ सिंगुलर मॅट्रिक्स (Rank 1): 2D अवकाश 1D रेषेत संकुचित झाले! व्यस्त मॅट्रिक्स अस्तित्वात नाही.',
+      invertedMsg: '🔄 दिशा उलटली (ऋण निश्चयक): समन्वय अवकाश परावर्तित/फ्लिप झाले आहे.',
+      preserveMsg: '✓ दिशा कायम ठेवते: एकक क्षेत्रफळाचे प्रमाण',
+      cgBadge: 'संगणक ग्राफिक्स आणि व्हिजन लिंक',
+      cgTitle: '3D कॅमेरा व्ह्यूपोर्ट आणि GPU शेडर्स',
+      cgDesc: 'प्रत्येक व्हिडिओ गेम आणि कॉम्प्युटर व्हिजन मॉडेल लाखो 3D निर्देशांकांना 4x4 मॅट्रिक्सने गुणून 2D स्क्रीन पिक्सेलमध्ये रूपांतरित करते!',
+      bstTitle: 'इंटरॅक्टिव्ह बायनरी शोध ट्री (BST)',
+      bstDesc: 'O(log n) वेळेत क्रमबद्ध विभाजन पाहण्यासाठी संख्या जोडा.',
+      insertNode: 'नोड जोडा',
+      inOrderLabel: 'इन-ऑर्डर क्रमबद्ध ट्रॅव्हर्सल:',
+      lruTitle: 'इंटरॅक्टिव्ह LRU कॅश सिम्युलेटर',
+      lruDesc: 'डबली लिंक्ड लिस्ट + हॅश मॅपद्वारे क्षमता 3 सह O(1) वाचन आणि लेखन.',
+      liveCacheMem: 'थेट कॅश मेमरी (MRU → LRU):',
+      opStream: 'ऑपरेशन लॉग:',
+      dictTitle: 'बहुभाषिक तांत्रिक आणि गणिती शब्दकोश',
+      dictDesc: 'तुमच्या प्रादेशिक मातृभाषेत प्रगत अभियांत्रिकी, गणिती आणि अल्गोरिदमिक तत्त्वांचे सोपे स्पष्टीकरण.',
+      activeDialect: 'सक्रिय भाषा:'
+    },
+    Tamil: {
+      pageTitle: 'ஊடாடும் பன்மொழி மற்றும் காட்சி/செயல்முறை கற்றல்',
+      pageDesc: 'ஊடாடும் நுண்கணித காட்சிப்படுத்திகள், 2D அணி உருமாற்ற சான்ட்பாக்ஸ்கள், வழிமுறைகள் மற்றும் தாய்மொழியில் கருத்து விளக்கங்கள்.',
+      langLabel: 'மொழி:',
+      tabCalculus: '📈 நுண்கணிதம் & தொடுகோடு ஆய்வி',
+      tabMatrix: '🔄 2D அணி உருமாற்ற சான்ட்பாக்ஸ்',
+      tabAlgorithms: '⚡ வழிமுறைகள் & கணினி சான்ட்பாக்ஸ்',
+      tabMultilingual: '🌐 பன்மொழி கருத்து அகராதி',
+      calcTitle: 'ஊடாடும் நுண்கணிதம் மற்றும் மாற்ற விகித காட்சிப்படுத்தி',
+      calcDesc: 'உடனடி சாய்வு (வகைக்கெழு) மற்றும் பரப்பளவு (தொகையீடு) எவ்வாறு மாறுகிறது என்பதைக் காண ஸ்லைடரை நகர்த்தவும்.',
+      parabola: 'பரவளையம் (Parabola)',
+      cubic: 'முப்படி (Cubic)',
+      clickHint: 'ஊடாடும்: வரைபடத்தில் எங்கு வேண்டுமானாலும் கிளிக் செய்யவும்',
+      selectPoint: 'உள்ளீட்டு புள்ளி x₀ ஐத் தேர்ந்தெடுக்கவும்:',
+      liveCalcTitle: 'நேரடி பகுப்பாய்வு கணக்கீடுகள்',
+      instSlope: 'உடனடி சாய்வு',
+      defIntegral: 'வரையறுக்கப்பட்ட தொகையீடு',
+      tangentEqAt: 'தொடுகோட்டு சமன்பாடு',
+      aiLinkBadge: 'AI & இயந்திர கற்றல் இணைப்பு',
+      aiLinkTitle: 'கிரேடியன்ட் டிசென்ட் & பேக்ரோபகேஷன்',
+      aiLinkDesc1: 'நரம்பியல் வலையமைப்புகளில், இழப்புச் சார்பு Loss(w) வகைக்கெழுவிற்கு எதிர் திசையில் குறைக்கப்படுகிறது:',
+      aiLinkDesc2: "f'(x) = 0 ஆக இருக்கும்போது தொடுகோடு கிடைமட்டமாக மாறி குறைந்தபட்ச பிழையை அடைகிறது!",
+      matrixTitle: '2D நேரியல் உருமாற்றம் & அணிக்கோவை வடிவியல்',
+      matrixDesc: 'அடிப்படை வெக்டார்கள் î மற்றும் ĵ வெளியை மாற்றுவதைப் பாருங்கள். det(A) பரப்பளவு மாற்றத்தைக் குறிக்கிறது.',
+      matrixBoxTitle: 'உருமாற்ற அணி A',
+      detCalcTitle: 'அணிக்கோவை (Determinant) கணக்கீடு:',
+      singularMsg: '⚠️ ஒருமை அணி (Rank 1): 2D வெளி 1D கோடாக சுருங்கியது! நேர்மாறு அணி இல்லை.',
+      invertedMsg: '🔄 திசை தலைகீழானது (எதிர்மறை அணிக்கோவை): ஆயத்தொலைவு வெளி பிரதிபலிக்கப்பட்டது.',
+      preserveMsg: '✓ திசையைப் பாதுகாக்கிறது: அலகு பரப்பளவு பெருக்கல் காரணி',
+      cgBadge: 'கணினி வரைகலை & பார்வை இணைப்பு',
+      cgTitle: '3D கேமரா காட்சிகள் & GPU ஷேடர்கள்',
+      cgDesc: 'ஒவ்வொரு வீடியோ கேமும் 3D ஆயத்தொலைவுகளை 4x4 அணிகளால் பெருக்கி 2D திரை பிக்சல்களாக மாற்றுகிறது!',
+      bstTitle: 'ஊடாடும் இருமை தேடல் மரம் (BST)',
+      bstDesc: 'O(log n) நேரத்தில் வரிசைப்படுத்தப்பட்ட தேடலைக் காண எண்களைச் சேர்க்கவும்.',
+      insertNode: 'முனை சேர்',
+      inOrderLabel: 'வரிசைப்படுத்தப்பட்ட பயணம் (In-Order):',
+      lruTitle: 'ஊடாடும் LRU கேச் சிமுலேட்டர்',
+      lruDesc: 'இரட்டை இணைப்புப் பட்டியல் + ஹேஷ் மேப் மூலம் O(1) வேகத்தில் தரவு சேமிப்பு.',
+      liveCacheMem: 'நேரடி கேச் நினைவகம் (MRU → LRU):',
+      opStream: 'செயல்பாட்டு பதிவு:',
+      dictTitle: 'பன்மொழி தொழில்நுட்ப மற்றும் கணித அகராதி',
+      dictDesc: 'உங்கள் தாய்மொழியில் மேம்பட்ட பொறியியல், கணிதம் மற்றும் கணினி வழிமுறைகளின் எளிய விளக்கம்.',
+      activeDialect: 'செயலில் உள்ள மொழி:'
+    },
+    Telugu: {
+      pageTitle: 'ఇంటరాక్టివ్ బహుభాషా & దృశ్య/ఆచరణాత్మక అభ్యాసం',
+      pageDesc: 'ఇంటరాక్టివ్ కలన గణిత విజువలైజర్లు, 2D మాత్రిక పరివర్తన శాండ్‌బాక్స్‌లు, అల్గారిథమ్‌లు మరియు మాతృభాషలో భావనల వివరణ.',
+      langLabel: 'భాష:',
+      tabCalculus: '📈 కలన గణితం & స్పర్శరేఖ ఎక్స్‌ప్లోరర్',
+      tabMatrix: '🔄 2D మాత్రిక పరివర్తన శాండ్‌బాక్స్',
+      tabAlgorithms: '⚡ అల్గారిథమ్‌లు & సిస్టమ్ శాండ్‌బాక్స్',
+      tabMultilingual: '🌐 బహుభాషా భావనల నిఘంటువు',
+      calcTitle: 'ఇంటరాక్టివ్ కలన గణితం & మార్పు రేటు విజువలైజర్',
+      calcDesc: 'తక్షణ వాలు (అవకలనం) మరియు వైశాల్యం (సమాకలనం) రియల్ టైమ్‌లో ఎలా మారుతాయో చూడటానికి స్లైడర్‌ను కదపండి.',
+      parabola: 'పరావలయం (Parabola)',
+      cubic: 'ఘన (Cubic)',
+      clickHint: 'ఇంటరాక్టివ్: గ్రాఫ్‌పై ఎక్కడైనా క్లిక్ చేయండి',
+      selectPoint: 'ఇన్‌పుట్ బిందువు x₀ ఎంచుకోండి:',
+      liveCalcTitle: 'లైవ్ విశ్లేషణాత్మక గణనలు',
+      instSlope: 'తక్షణ వాలు',
+      defIntegral: 'నిశ్చిత సమాకలనం',
+      tangentEqAt: 'స్పర్శరేఖ సమీకరణం',
+      aiLinkBadge: 'AI & మెషిన్ లెర్నింగ్ లింక్',
+      aiLinkTitle: 'గ్రేడియంట్ డిసెంట్ & బ్యాక్‌ప్రొపగేషన్',
+      aiLinkDesc1: 'న్యూరల్ నెట్‌వర్క్‌లలో, లాస్ ఫంక్షన్ Loss(w) అవకలనానికి వ్యతిరేక దిశలో అడుగు వేయడం ద్వారా కనిష్టీకరించబడుతుంది:',
+      aiLinkDesc2: "f'(x) = 0 అయినప్పుడు స్పర్శరేఖ సమాంతరంగా మారి కనిష్ట దోషం వద్ద స్థిరపడుతుంది!",
+      matrixTitle: '2D లీనియర్ పరివర్తన & నిర్ధారణ (Determinant) జ్యామితి',
+      matrixDesc: 'ఆధార సదిశలు î మరియు ĵ స్థలాన్ని ఎలా మారుస్తాయో చూడండి. det(A) వైశాల్య స్కేలింగ్ కారకాన్ని సూచిస్తుంది.',
+      matrixBoxTitle: 'పరివర్తన మాత్రిక A',
+      detCalcTitle: 'నిర్ధారణ (Determinant) గణన:',
+      singularMsg: '⚠️ సింగులర్ మాత్రిక (Rank 1): 2D స్థలం 1D రేఖగా కుదించబడింది! విలోమ మాత్రిక లేదు.',
+      invertedMsg: '🔄 దిశ తారుమారైంది (రుణాత్మక నిర్ధారణ): నిరూపక స్థలం ప్రతిబింబించబడింది.',
+      preserveMsg: '✓ దిశను నిలుపుకుంటుంది: యూనిట్ వైశాల్య గుణకం',
+      cgBadge: 'కంప్యూటర్ గ్రాఫిక్స్ & విజన్ లింక్',
+      cgTitle: '3D కెమెరా వ్యూపోర్ట్‌లు & GPU షేడర్లు',
+      cgDesc: 'ప్రతి వీడియో గేమ్ మరియు కంప్యూటర్ విజన్ మోడల్ 3D నిరూపకాలను 4x4 మాత్రికలతో గుణించి 2D స్క్రీన్ పిక్సెల్‌లుగా మారుస్తుంది!',
+      bstTitle: 'ఇంటరాక్టివ్ బైనరీ శోధన వృక్షం (BST)',
+      bstDesc: 'O(log n) సమయంలో క్రమబద్ధ శోధనను చూడటానికి సంఖ్యలను జోడించండి.',
+      insertNode: 'నోడ్ జోడించు',
+      inOrderLabel: 'ఇన్-ఆర్డర్ క్రమబద్ధ ట్రావర్సల్:',
+      lruTitle: 'ఇంటరాక్టివ్ LRU క్యాష్ సిమ్యులేటర్',
+      lruDesc: 'డబ్లీ లింక్డ్ లిస్ట్ + హ్యాష్ మ్యాప్ ద్వారా O(1) వేగంతో రీడ్ మరియు రైట్.',
+      liveCacheMem: 'లైవ్ క్యాష్ మెమరీ (MRU → LRU):',
+      opStream: 'ఆపరేషన్ లాగ్:',
+      dictTitle: 'బహుభాషా సాంకేతిక & గణిత నిఘంటువు',
+      dictDesc: 'మీ ప్రాంతీయ మాతృభాషలో ఇంజనీరింగ్, గణిత మరియు అల్గారిథమిక్ సూత్రాల సులభ వివరణ.',
+      activeDialect: 'ప్రస్తుత భాష:'
+    },
+    Bengali: {
+      pageTitle: 'ইন্টারঅ্যাক্টিভ বহুভাষিক এবং ভিজ্যুয়াল/ব্যবহারিক শিক্ষা',
+      pageDesc: 'ইন্টারঅ্যাক্টিভ ক্যালকুলাস ভিজ্যুয়ালাইজার, 2D ম্যাট্রিক্স রূপান্তর স্যান্ডবক্স, অ্যালগরিদম এবং মাতৃভাষায় ধারণার বিশ্লেষণ।',
+      langLabel: 'ভাষা:',
+      tabCalculus: '📈 ক্যালকুলাস ও স্পর্শক এক্সপ্লোরার',
+      tabMatrix: '🔄 2D ম্যাট্রিক্স রূপান্তর স্যান্ডবক্স',
+      tabAlgorithms: '⚡ অ্যালগরিদম ও সিস্টেম স্যান্ডবক্স',
+      tabMultilingual: '🌐 বহুভাষিক ধারণা অভিধান',
+      calcTitle: 'ইন্টারঅ্যাক্টিভ ক্যালকুলাস এবং পরিবর্তনের হার ভিজ্যুয়ালাইজার',
+      calcDesc: 'তাৎক্ষণিক ঢাল (অন্তরকলন) এবং সঞ্চিত ক্ষেত্রফল (সমাকলন) কীভাবে পরিবর্তিত হয় তা দেখতে স্লাইডারটি সরান।',
+      parabola: 'পরাবৃত্ত (Parabola)',
+      cubic: 'ত্রিঘাত (Cubic)',
+      clickHint: 'ইন্টারঅ্যাক্টিভ: গ্রাফের যেকোনো স্থানে ক্লিক করুন',
+      selectPoint: 'ইনপুট বিন্দু x₀ নির্বাচন করুন:',
+      liveCalcTitle: 'লাইভ বিশ্লেষণাত্মক গণনা',
+      instSlope: 'তাৎক্ষণিক ঢাল',
+      defIntegral: 'নির্দিষ্ট সমাকলন',
+      tangentEqAt: 'স্পর্শক রেখার সমীকরণ',
+      aiLinkBadge: 'AI ও মেশিন লার্নিং সংযোগ',
+      aiLinkTitle: 'গ্রেডিয়েন্ট ডিসেন্ট ও ব্যাকপ্রোপাগেশন',
+      aiLinkDesc1: 'নিউরাল নেটওয়ার্কে, লস ফাংশন Loss(w) অন্তরকলনের বিপরীত দিকে ধাপ ফেলে সর্বনিম্ন করা হয়:',
+      aiLinkDesc2: "লক্ষ্য করুন যখন f'(x) = 0 হয়, তখন স্পর্শক সম্পূর্ণ অনুভূমিক হয় এবং সর্বনিম্ন ত্রুটি অর্জিত হয়!",
+      matrixTitle: '2D রৈখিক রূপান্তর ও নির্ণায়ক (Determinant) জ্যামিতি',
+      matrixDesc: 'ভিত্তি ভেক্টর î এবং ĵ কীভাবে স্থান পরিবর্তন করে তা দেখুন। নির্ণায়ক det(A) ক্ষেত্রফল স্কেলিং নির্দেশ করে।',
+      matrixBoxTitle: 'রূপান্তর ম্যাট্রিক্স A',
+      detCalcTitle: 'নির্ণায়ক (Determinant) গণনা:',
+      singularMsg: '⚠️ সিঙ্গুলার ম্যাট্রিক্স (Rank 1): 2D স্থান 1D রেখায় সংকুচিত হয়েছে! কোনো বিপরীত ম্যাট্রিক্স নেই।',
+      invertedMsg: '🔄 দিক উল্টে গেছে (ঋণাত্মক নির্ণায়ক): স্থানাঙ্ক স্থান প্রতিফলিত/ফ্লিপ হয়েছে।',
+      preserveMsg: '✓ দিক বজায় রাখে: একক ক্ষেত্রফলের গুণিতক',
+      cgBadge: 'কম্পিউটার গ্রাফিক্স ও ভিশন সংযোগ',
+      cgTitle: '3D ক্যামেরা ভিউপোর্ট ও GPU শেডার্স',
+      cgDesc: 'প্রতিটি ভিডিও গেম এবং কম্পিউটার ভিশন মডেল লক্ষ লক্ষ 3D স্থানাঙ্ককে 4x4 ম্যাট্রিক্স দিয়ে গুণ করে 2D স্ক্রিন পিক্সেলে রূপান্তর করে!',
+      bstTitle: 'ইন্টারঅ্যাক্টিভ বাইনারি সার্চ ট্রি (BST)',
+      bstDesc: 'O(log n) সময়ে ক্রমবদ্ধ বিভাজন দেখতে সংখ্যা যোগ করুন।',
+      insertNode: 'নোড যোগ করুন',
+      inOrderLabel: 'ইন-অর্ডার ক্রমবদ্ধ ট্র্যাভার্সাল:',
+      lruTitle: 'ইন্টারঅ্যাক্টিভ LRU ক্যাশ সিমুলেটর',
+      lruDesc: 'ডাবলি লিঙ্কড লিস্ট + হ্যাশ ম্যাপের মাধ্যমে O(1) সময়ে ডেটা রিড ও রাইট।',
+      liveCacheMem: 'লাইভ ক্যাশ মেমরি (MRU → LRU):',
+      opStream: 'অপারেশন লগ:',
+      dictTitle: 'বহুভাষিক প্রযুক্তিগত ও গাণিতিক অভিধান',
+      dictDesc: 'আপনার আঞ্চলিক মাতৃভাষায় উন্নত ইঞ্জিনিয়ারিং, গাণিতিক এবং অ্যালগরিদমিক নীতিগুলির সহজ ব্যাখ্যা।',
+      activeDialect: 'সক্রিয় ভাষা:'
+    }
+  };
+
+  const ui = LEARNING_UI_I18N[selectedLang] || LEARNING_UI_I18N['English'];
 
   // 1. Calculus State
   const [calcFunc, setCalcFunc] = useState<'poly' | 'trig' | 'cubic'>('poly');
@@ -4765,46 +5123,60 @@ export const StudentLearningView: React.FC = () => {
   // Multilingual Dictionary
   const DICTIONARY: Record<string, any[]> = {
     English: [
-      { term: 'Differential Calculus', native: 'Calculus', translit: 'Differentiation', desc: 'The mathematical study of continuous instantaneous rates of change and tangent slopes.' },
-      { term: 'Riemann Integration', native: 'Definite Integral', translit: 'Integration', desc: 'Accumulation of continuous quantities, calculating net area under curve and cumulative totals.' },
-      { term: 'Matrix Transformation', native: 'Linear Algebra', translit: 'Transformation', desc: 'Mapping coordinate bases from one space to another via linear combinations.' },
-      { term: 'Binary Search Tree', native: 'Data Structures', translit: 'BST', desc: 'A hierarchical node tree where left child < root < right child, providing O(log n) lookups.' }
+      { term: 'Differential Calculus', native: 'Calculus (dy/dx)', translit: 'Differentiation', desc: 'The mathematical study of continuous instantaneous rates of change and tangent slopes.' },
+      { term: 'Riemann Integration', native: 'Definite Integral (∫ f(x)dx)', translit: 'Integration', desc: 'Accumulation of continuous quantities, calculating net area under curve and cumulative totals.' },
+      { term: 'Matrix Transformation', native: 'Linear Algebra (Ax = b)', translit: 'Transformation', desc: 'Mapping coordinate bases from one space to another via linear combinations.' },
+      { term: 'Binary Search Tree', native: 'Data Structures (BST)', translit: 'Hierarchical Tree', desc: 'A hierarchical node tree where left child < root < right child, providing O(log n) lookups.' },
+      { term: 'Gradient Descent', native: 'Optimization (∇L)', translit: 'Weight Update', desc: 'Iterative optimization algorithm for finding local minima of differentiable loss functions in AI.' },
+      { term: 'LRU Cache Eviction', native: 'System Memory (O(1))', translit: 'Least Recently Used', desc: 'Combines a doubly linked list and hash map to evict the oldest unused page in constant time.' }
     ],
     Hindi: [
       { term: 'Differential Calculus', native: 'अवकलन (Differentiation)', translit: 'Avakalan', desc: 'तात्कालिक परिवर्तन की दर और स्पर्शरेखा ढलान का गणितीय अध्ययन।' },
       { term: 'Riemann Integration', native: 'समाकलन (Integration)', translit: 'Samakalan', desc: 'सतत मात्राओं का संचय, वक्र के नीचे कुल क्षेत्रफल और संचयी योग की गणना।' },
       { term: 'Matrix Transformation', native: 'आव्यूह रूपांतरण (Matrix Transform)', translit: 'Aavyooh Roopantaran', desc: 'रैखिक संयोजनों के माध्यम से निर्देशांक आधार को एक स्थान से दूसरे स्थान पर मैप करना।' },
-      { term: 'Binary Search Tree', native: 'द्वि-आधारी खोज वृक्ष (BST)', translit: 'Dvi-Aadhari Khoj Vriksh', desc: 'पदानुक्रमित नोड ट्री जहाँ बायाँ बच्चा < मूल < दायाँ बच्चा, जो O(log n) खोज प्रदान करता है।' }
+      { term: 'Binary Search Tree', native: 'द्वि-आधारी खोज वृक्ष (BST)', translit: 'Dvi-Aadhari Khoj Vriksh', desc: 'पदानुक्रमित नोड ट्री जहाँ बायाँ नोड < मूल < दायाँ नोड, जो O(log n) खोज प्रदान करता है।' },
+      { term: 'Gradient Descent', native: 'प्रवणता अवरोहण (Gradient Descent)', translit: 'Pravanata Avarohan', desc: 'न्यूरल नेटवर्क में त्रुटि (Loss) को न्यूनतम करने के लिए अवकलन की विपरीत दिशा में भार अद्यतन।' },
+      { term: 'LRU Cache Eviction', native: 'एलआरयू कैश स्मृति (LRU Cache)', translit: 'Kam Upayog Smriti', desc: 'डबली लिंक्ड लिस्ट और हैश मैप का उपयोग करके O(1) समय में सबसे पुरानी मेमोरी प्रविष्टि हटाना।' }
     ],
     Gujarati: [
       { term: 'Differential Calculus', native: 'વિકલન (Differentiation)', translit: 'Vikalan', desc: 'ક્ષણિક પરિવર્તનનો દર અને સ્પર્શક ઢોળાવનો ગણિતીય અભ્યાસ.' },
       { term: 'Riemann Integration', native: 'સંકલન (Integration)', translit: 'Sankalan', desc: 'સતત જથ્થાઓનો સંગ્રહ અને વક્ર નીચેના કુલ ક્ષેત્રફળની ગણતરી.' },
       { term: 'Matrix Transformation', native: 'શ્રેણિક રૂપાંતરણ (Matrix Transform)', translit: 'Shrenik Roopantaran', desc: 'સુરેખ સંયોજનો દ્વારા યામ પદ્ધતિનું એક સ્થાનથી બીજા સ્થાન પર રૂપાંતરણ.' },
-      { term: 'Binary Search Tree', native: 'દ્વિ-અંકી શોધ વૃક્ષ (BST)', translit: 'Dvi-Anki Shodh Vriksh', desc: 'એક વૃક્ષ સંરચના જ્યાં ડાબી બાજુનું ઘટક < મૂળ < જમણી બાજુનું ઘટક હોય છે.' }
+      { term: 'Binary Search Tree', native: 'દ્વિ-અંકી શોધ વૃક્ષ (BST)', translit: 'Dvi-Anki Shodh Vriksh', desc: 'એક વૃક્ષ સંરચના જ્યાં ડાબી બાજુનું ઘટક < મૂળ < જમણી બાજુનું ઘટક હોય છે.' },
+      { term: 'Gradient Descent', native: 'ઢોળાવ અવરોહણ (Gradient Descent)', translit: 'Dholav Avarohan', desc: 'AI મોડેલમાં ભૂલ (Loss) ઘટાડવા માટે વિકલનની વિરુદ્ધ દિશામાં પુનરાવર્તિત ઑપ્ટિમાઇઝેશન.' },
+      { term: 'LRU Cache Eviction', native: 'LRU કેશ મેમરી (O(1) Cache)', translit: 'ochhu Vaparayel Smruti', desc: 'ડબલી લિંક્ડ લિસ્ટ અને હેશ મેપ વડે O(1) સમયમાં સૌથી જૂની બિનવપરાયેલ માહિતી દૂર કરવી.' }
     ],
     Marathi: [
       { term: 'Differential Calculus', native: 'अवकलन (Differentiation)', translit: 'Avakalan', desc: 'तात्कालिक बदल दर आणि स्पर्शिका उताराचा गणिती अभ्यास.' },
       { term: 'Riemann Integration', native: 'समाकलन (Integration)', translit: 'Samakalan', desc: 'वक्राखालील एकूण क्षेत्रफळ आणि संचयी परिमाणांची गणना.' },
       { term: 'Matrix Transformation', native: 'मॅट्रिक्स रूपांतरण (Matrix Transform)', translit: 'Matrix Roopantaran', desc: 'रेषीय संयोजनांद्वारे समन्वय प्रणालीचे रूपांतरण.' },
-      { term: 'Binary Search Tree', native: 'बायनरी शोध ट्री (BST)', translit: 'Binary Shodh Tree', desc: 'एक डेटा रचना जिथे डावा घटक < मूळ < उजवा घटक असतो.' }
+      { term: 'Binary Search Tree', native: 'बायनरी शोध ट्री (BST)', translit: 'Binary Shodh Tree', desc: 'एक डेटा रचना जिथे डावा घटक < मूळ < उजवा घटक असतो.' },
+      { term: 'Gradient Descent', native: 'उतार अवरोहण (Gradient Descent)', translit: 'Utar Avarohan', desc: 'मशीन लर्निंगमध्ये त्रुटी कमी करण्यासाठी अवकलनाच्या विरुद्ध दिशेने केलेले ऑप्टिमायझेशन.' },
+      { term: 'LRU Cache Eviction', native: 'एलआरयू कॅश मेमरी (LRU Cache)', translit: 'Kiman Vaparleli Smruti', desc: 'हॅश मॅप आणि दुहेरी यादी वापरून O(1) वेळेत सर्वात जुनी कॅश नोंद काढून टाकणे.' }
     ],
     Tamil: [
-      { term: 'Differential Calculus', native: 'நுண்கணிதம் (Calculus)', translit: 'Nunkalitham', desc: 'உடனடி மாற்ற விகிதம் மற்றும் தொடுகோட்டு சாய்வு பற்றிய கணித ஆய்வு.' },
+      { term: 'Differential Calculus', native: 'வகை நுண்கணிதம் (Differentiation)', translit: 'Nunkalitham', desc: 'உடனடி மாற்ற விகிதம் மற்றும் தொடுகோட்டு சாய்வு பற்றிய கணித ஆய்வு.' },
       { term: 'Riemann Integration', native: 'தொகையீட்டு கணிதம் (Integration)', translit: 'Thogaiyeedu', desc: 'தொடர்ச்சியான அளவுகளின் குவிப்பு மற்றும் வளைவின் கீழ் பரப்பளவைக் கணக்கிடுதல்.' },
       { term: 'Matrix Transformation', native: 'அணி உருமாற்றம் (Matrix Transform)', translit: 'Ani Urumaattram', desc: 'நேரியல் சேர்க்கைகள் மூலம் ஒருங்கிணைப்பு தளங்களை ஒரு இடத்திலிருந்து மற்றொன்றுக்கு மாற்றுதல்.' },
-      { term: 'Binary Search Tree', native: 'இருமை தேடல் மரம் (BST)', translit: 'Irumai Thedal Maram', desc: 'இடது குழந்தை < வேர் < வலது குழந்தை என்ற படிநிலை தரவு அமைப்பு (O(log n) தேடல்).' }
+      { term: 'Binary Search Tree', native: 'இருமை தேடல் மரம் (BST)', translit: 'Irumai Thedal Maram', desc: 'இடது குழந்தை < வேர் < வலது குழந்தை என்ற படிநிலை தரவு அமைப்பு (O(log n) தேடல்).' },
+      { term: 'Gradient Descent', native: 'சரிவு இறக்கம் (Gradient Descent)', translit: 'Sarivu Irakkam', desc: 'செயற்கை நுண்ணறிவில் பிழையைக் குறைக்க வகைக்கெழுவிற்கு எதிர் திசையில் நகரும் முறை.' },
+      { term: 'LRU Cache Eviction', native: 'LRU கேச் நினைவகம் (O(1))', translit: 'Kuraivaga Payanpaduthiya Ninaivagam', desc: 'இரட்டை இணைப்புப் பட்டியல் மூலம் O(1) நேரத்தில் பழைய தரவை நீக்கும் முறை.' }
     ],
     Telugu: [
       { term: 'Differential Calculus', native: 'అవకలన గణితం (Calculus)', translit: 'Avakalana Ganitam', desc: 'తక్షణ మార్పు రేటు మరియు స్పర్శరేఖ వాలుపై గణిత పరిశీలన.' },
       { term: 'Riemann Integration', native: 'సమాకలన గణితం (Integration)', translit: 'Samakalana Ganitam', desc: 'నిరంతర పరిమాణాల కూర్పు మరియు వక్రరేఖ కింద విస్తీర్ణాన్ని లెక్కించడం.' },
       { term: 'Matrix Transformation', native: 'మాత్రిక పరివర్తన (Matrix Transform)', translit: 'Matrika Parivartana', desc: 'లీనియర్ కాంబినేషన్ల ద్వారా సమన్వయ స్థానాన్ని మార్చే పద్ధతి.' },
-      { term: 'Binary Search Tree', native: 'బైనరీ శోధన వృక్షం (BST)', translit: 'Binary Shodhana Vruksham', desc: 'ఎడమ నోడ్ < మూలం < కుడి నోడ్ నిబంధనతో పనిచేసే సోపానక్రమ శోధన నిర్మాణం.' }
+      { term: 'Binary Search Tree', native: 'బైనరీ శోధన వృక్షం (BST)', translit: 'Binary Shodhana Vruksham', desc: 'ఎడమ నోడ్ < మూలం < కుడి నోడ్ నిబంధనతో పనిచేసే సోపానక్రమ శోధన నిర్మాణం.' },
+      { term: 'Gradient Descent', native: 'గ్రేడియంట్ డిసెంట్ (అవరోహణ)', translit: 'Valu Avarohana', desc: 'మెషిన్ లెర్నింగ్‌లో దోషాన్ని తగ్గించడానికి అవకలనానికి వ్యతిరేక దిశలో జరిపే ఆప్టిమైజేషన్.' },
+      { term: 'LRU Cache Eviction', native: 'LRU క్యాష్ మెమరీ (O(1))', translit: 'Takkuvaupayoginchina Smruti', desc: 'డబ్లీ లింక్డ్ లిస్ట్ మరియు హ్యాష్ మ్యాప్‌తో O(1) సమయంలో పాత డేటాను తొలగించే పద్ధతి.' }
     ],
     Bengali: [
       { term: 'Differential Calculus', native: 'অন্তরকলন (Differentiation)', translit: 'Ontor-kolon', desc: 'তাৎক্ষণিক পরিবর্তনের হার ও স্পর্শক ঢাল বিষয়ক গাণিতিক অধ্যয়ন।' },
       { term: 'Riemann Integration', native: 'সমাকলন (Integration)', translit: 'Somakolon', desc: 'ধারাবাহিক রাশির একত্রীকরণ ও বক্ররেখার নিচের ক্ষেত্রফল পরিমাপ।' },
       { term: 'Matrix Transformation', native: 'ম্যাট্রিক্স রূপান্তর (Matrix Transform)', translit: 'Matrix Rupantor', desc: 'রৈখিক রূপান্তরের মাধ্যমে স্থানাঙ্ক ব্যবস্থার বিন্যাস পরিবর্তন।' },
-      { term: 'Binary Search Tree', native: 'বাইনারি অনুসন্ধান ট্রি (BST)', translit: 'Binary Onushondhan Tree', desc: 'একটি স্তরভিত্তিক ডেটা কাঠামো যেখানে বাম সন্তান < মূল < ডান সন্তান বজায় থাকে।' }
+      { term: 'Binary Search Tree', native: 'বাইনারি অনুসন্ধান ট্রি (BST)', translit: 'Binary Onushondhan Tree', desc: 'একটি স্তরভিত্তিক ডেটা কাঠামো যেখানে বাম সন্তান < মূল < ডান সন্তান বজায় থাকে।' },
+      { term: 'Gradient Descent', native: 'গ্রেডিয়েন্ট ডিসেন্ট (ঢাল অবরোহণ)', translit: 'Dhal Oborohon', desc: 'নিউরাল নেটওয়ার্কে ত্রুটি কমাতে অন্তরকলনের বিপরীত দিকে ধাপে ধাপে অপ্টিমাইজেশন।' },
+      { term: 'LRU Cache Eviction', native: 'এলআরইউ ক্যাশ মেমরি (LRU Cache)', translit: 'Kom Byabohrito Smriti', desc: 'ডাবলি লিঙ্কড লিস্ট ও হ্যাশ ম্যাপের সাহায্যে O(1) সময়ে সবচেয়ে পুরনো ডেটা অপসারণ।' }
     ]
   };
 
@@ -4821,11 +5193,11 @@ export const StudentLearningView: React.FC = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Interactive Multilingual & Visual/Practical Learning"
-        desc="Interactive calculus and differential geometry visualizers, 2D matrix transformation sandboxes, algorithms, and multilingual concept breakdowns."
+        title={ui.pageTitle}
+        desc={ui.pageDesc}
         action={
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-[#2C3524]">Language:</span>
+            <span className="text-xs font-semibold text-[#2C3524]">{ui.langLabel}</span>
             <select
               value={selectedLang}
               onChange={(e) => handleLanguageChange(e.target.value)}
@@ -4853,7 +5225,7 @@ export const StudentLearningView: React.FC = () => {
               : 'border-transparent text-[var(--text-muted)] hover:text-[#2C3524]'
           }`}
         >
-          📈 Calculus & Tangent Explorer
+          {ui.tabCalculus}
         </button>
         <button
           onClick={() => setActiveTab('matrix')}
@@ -4863,7 +5235,7 @@ export const StudentLearningView: React.FC = () => {
               : 'border-transparent text-[var(--text-muted)] hover:text-[#2C3524]'
           }`}
         >
-          🔄 2D Matrix Transformation Sandbox
+          {ui.tabMatrix}
         </button>
         <button
           onClick={() => setActiveTab('algorithms')}
@@ -4873,7 +5245,7 @@ export const StudentLearningView: React.FC = () => {
               : 'border-transparent text-[var(--text-muted)] hover:text-[#2C3524]'
           }`}
         >
-          ⚡ Algorithms & System Sandboxes
+          {ui.tabAlgorithms}
         </button>
         <button
           onClick={() => setActiveTab('multilingual')}
@@ -4883,7 +5255,7 @@ export const StudentLearningView: React.FC = () => {
               : 'border-transparent text-[var(--text-muted)] hover:text-[#2C3524]'
           }`}
         >
-          🌐 Multilingual Concept Glossary
+          {ui.tabMultilingual}
         </button>
       </div>
 
@@ -4895,10 +5267,10 @@ export const StudentLearningView: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h4 className="font-display font-semibold text-lg text-[#2C3524]">
-                  Interactive Calculus & Rate of Change Visualizer
+                  {ui.calcTitle}
                 </h4>
                 <p className="text-xs text-[var(--text-muted)]">
-                  Move the slider to observe how instantaneous slope (derivative) and accumulated area (integral) change in real time.
+                  {ui.calcDesc}
                 </p>
               </div>
 
@@ -4910,7 +5282,7 @@ export const StudentLearningView: React.FC = () => {
                     calcFunc === 'poly' ? 'bg-sagedeep text-pcream shadow-sm' : 'text-[#2C3524]'
                   }`}
                 >
-                  Parabola
+                  {ui.parabola}
                 </button>
                 <button
                   onClick={() => setCalcFunc('trig')}
@@ -4926,7 +5298,7 @@ export const StudentLearningView: React.FC = () => {
                     calcFunc === 'cubic' ? 'bg-sagedeep text-pcream shadow-sm' : 'text-[#2C3524]'
                   }`}
                 >
-                  Cubic
+                  {ui.cubic}
                 </button>
               </div>
             </div>
@@ -4939,7 +5311,7 @@ export const StudentLearningView: React.FC = () => {
                   Curve: <strong className="text-sky-300">{funcLabel}</strong>
                 </span>
                 <span className="text-[11px] text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded border border-emerald-800/50">
-                  Interactive: Click anywhere on graph
+                  {ui.clickHint}
                 </span>
               </div>
               <svg
@@ -5034,7 +5406,7 @@ export const StudentLearningView: React.FC = () => {
             {/* Slider Control */}
             <div className="space-y-1.5 pt-2">
               <div className="flex justify-between text-xs">
-                <span className="font-semibold text-[#2C3524]">Select Input Point x₀:</span>
+                <span className="font-semibold text-[#2C3524]">{ui.selectPoint}</span>
                 <span className="font-mono font-bold text-sagedeep">{x0.toFixed(2)}</span>
               </div>
               <input
@@ -5053,7 +5425,7 @@ export const StudentLearningView: React.FC = () => {
           <div className="space-y-4">
             <Card className="p-5 space-y-3">
               <h5 className="font-display font-semibold text-sm text-[#2C3524] uppercase tracking-wider">
-                Live Analytical Calculations
+                {ui.liveCalcTitle}
               </h5>
 
               <div className="p-3 rounded-xl bg-slate-900 text-white font-mono text-xs space-y-1.5">
@@ -5061,13 +5433,13 @@ export const StudentLearningView: React.FC = () => {
                 <div className="text-rose-400 font-bold">{derivLabel}</div>
                 <div className="pt-2 border-t border-slate-800 space-y-1 text-slate-300">
                   <div>f({x0.toFixed(2)}) = <span className="text-emerald-400 font-bold">{fx.toFixed(2)}</span></div>
-                  <div>Instantaneous Slope f'({x0.toFixed(2)}) = <span className="text-rose-400 font-bold">{dfx.toFixed(2)}</span></div>
-                  <div>Definite Integral = <span className="text-amber-400 font-bold">{integral.toFixed(2)}</span></div>
+                  <div>{ui.instSlope} f'({x0.toFixed(2)}) = <span className="text-rose-400 font-bold">{dfx.toFixed(2)}</span></div>
+                  <div>{ui.defIntegral} = <span className="text-amber-400 font-bold">{integral.toFixed(2)}</span></div>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-[#F2E8CF]/50 border border-[#E1D6AE] text-xs space-y-1">
-                <div className="font-bold text-[#2C3524]">Tangent Line Equation at ({x0.toFixed(1)}, {fx.toFixed(1)}):</div>
+                <div className="font-bold text-[#2C3524]">{ui.tangentEqAt} ({x0.toFixed(1)}, {fx.toFixed(1)}):</div>
                 <div className="font-mono text-xs text-sagedeep font-bold">
                   y = {dfx.toFixed(2)} · (x - {x0.toFixed(2)}) + {fx.toFixed(2)}
                 </div>
@@ -5076,17 +5448,17 @@ export const StudentLearningView: React.FC = () => {
 
             <Card className="p-5 space-y-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
               <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950 uppercase tracking-wider">
-                <span>🤖</span> AI & Machine Learning Link
+                <span>🤖</span> {ui.aiLinkBadge}
               </div>
-              <h6 className="font-semibold text-sm text-blue-950">Gradient Descent & Backpropagation</h6>
+              <h6 className="font-semibold text-sm text-blue-950">{ui.aiLinkTitle}</h6>
               <p className="text-xs text-blue-900/80 leading-relaxed">
-                In neural networks, the loss function Loss(w) is minimized by stepping opposite to the derivative:
+                {ui.aiLinkDesc1}
                 <br />
                 <code className="bg-white/80 px-2 py-0.5 rounded font-mono text-blue-950 font-bold mt-1 inline-block">
                   w_new = w_old - η · f'(w_old)
                 </code>
                 <br />
-                Notice that when f'(x) = 0 (at local extrema), the tangent is completely horizontal and weight updates settle at minimum error!
+                {ui.aiLinkDesc2}
               </p>
             </Card>
           </div>
@@ -5100,10 +5472,10 @@ export const StudentLearningView: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h4 className="font-display font-semibold text-lg text-[#2C3524]">
-                  2D Linear Transformation & Determinant Geometry
+                  {ui.matrixTitle}
                 </h4>
                 <p className="text-xs text-[var(--text-muted)]">
-                  Watch basis vectors î and ĵ transform space. The determinant det(A) represents the signed area scaling factor.
+                  {ui.matrixDesc}
                 </p>
               </div>
 
@@ -5241,7 +5613,7 @@ export const StudentLearningView: React.FC = () => {
           <div className="space-y-4">
             <Card className="p-5 space-y-3">
               <h5 className="font-display font-semibold text-sm text-[#2C3524] uppercase tracking-wider">
-                Transformation Matrix A
+                {ui.matrixBoxTitle}
               </h5>
 
               <div className="p-4 rounded-xl bg-slate-900 text-white font-mono text-center flex items-center justify-center gap-4 text-base shadow-inner">
@@ -5256,17 +5628,17 @@ export const StudentLearningView: React.FC = () => {
               </div>
 
               <div className="p-3.5 rounded-xl bg-[#F2E8CF]/60 border border-[#E1D6AE] text-xs space-y-1.5">
-                <div className="font-bold text-[#2C3524]">Determinant Calculation:</div>
+                <div className="font-bold text-[#2C3524]">{ui.detCalcTitle}</div>
                 <div className="font-mono text-xs text-sagedeep font-bold">
                   det(A) = (a·d) - (b·c) = ({matA.toFixed(1)}·{matD.toFixed(1)}) - ({matB.toFixed(1)}·{matC.toFixed(1)}) = {det.toFixed(2)}
                 </div>
                 <p className="text-[11px] text-[var(--text-muted)] mt-1">
                   {det === 0 ? (
-                    <strong className="text-rose-700">⚠️ Singular Matrix (Rank 1): 2D space collapsed into a 1D line! No inverse matrix exists.</strong>
+                    <strong className="text-rose-700">{ui.singularMsg}</strong>
                   ) : det < 0 ? (
-                    <strong className="text-amber-700">🔄 Orientation Inverted (Negative Determinant): Coordinate space has been mirrored/flipped.</strong>
+                    <strong className="text-amber-700">{ui.invertedMsg}</strong>
                   ) : (
-                    <strong className="text-emerald-700">✓ Preserves Orientation: Scales unit area by factor of {det.toFixed(2)}.</strong>
+                    <strong className="text-emerald-700">{ui.preserveMsg} {det.toFixed(2)}.</strong>
                   )}
                 </p>
               </div>
@@ -5274,11 +5646,11 @@ export const StudentLearningView: React.FC = () => {
 
             <Card className="p-5 space-y-2 bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200">
               <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950 uppercase tracking-wider">
-                <span>🎮</span> Computer Graphics & Vision Link
+                <span>🎮</span> {ui.cgBadge}
               </div>
-              <h6 className="font-semibold text-sm text-emerald-950">3D Camera Viewports & GPU Shaders</h6>
+              <h6 className="font-semibold text-sm text-emerald-950">{ui.cgTitle}</h6>
               <p className="text-xs text-emerald-900/80 leading-relaxed">
-                Every video game and computer vision model transforms millions of 3D polygon coordinates into 2D screen pixels per second by multiplying vertices with Model-View-Projection (MVP) 4x4 affine matrices!
+                {ui.cgDesc}
               </p>
             </Card>
           </div>
@@ -5293,10 +5665,10 @@ export const StudentLearningView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-display font-semibold text-base text-[#2C3524]">
-                  Interactive Binary Search Tree (BST)
+                  {ui.bstTitle}
                 </h4>
                 <p className="text-xs text-[var(--text-muted)]">
-                  Add numbers to watch binary partitioning maintain the in-order invariant in O(log n) time.
+                  {ui.bstDesc}
                 </p>
               </div>
               <Tag tone="sage">O(log n)</Tag>
@@ -5311,7 +5683,7 @@ export const StudentLearningView: React.FC = () => {
                 className="flex-1 p-2 rounded-lg border border-[#E1D6AE] bg-white text-xs text-[#2C3524]"
               />
               <Button size="sm" variant="primary" onClick={handleAddBstNode}>
-                Insert Node
+                {ui.insertNode}
               </Button>
             </div>
 
@@ -5332,7 +5704,7 @@ export const StudentLearningView: React.FC = () => {
             </div>
 
             <div className="p-3 rounded-xl bg-[#F2E8CF]/50 border border-[#E1D6AE] text-xs">
-              <span className="font-semibold text-[#2C3524]">In-Order Sorted Traversal:</span>
+              <span className="font-semibold text-[#2C3524]">{ui.inOrderLabel}</span>
               <div className="font-mono text-xs text-sagedeep font-bold mt-1">
                 [{bstNodes.join(', ')}]
               </div>
@@ -5344,10 +5716,10 @@ export const StudentLearningView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-display font-semibold text-base text-[#2C3524]">
-                  Interactive LRU Cache Simulator
+                  {ui.lruTitle}
                 </h4>
                 <p className="text-xs text-[var(--text-muted)]">
-                  Doubly linked list + hash map achieving O(1) reads and writes with capacity 3.
+                  {ui.lruDesc}
                 </p>
               </div>
               <Tag tone="purple">Capacity: 3</Tag>
@@ -5375,7 +5747,7 @@ export const StudentLearningView: React.FC = () => {
 
             {/* Visual Cache Slots */}
             <div className="space-y-2">
-              <div className="text-[11px] font-bold text-[#2C3524] uppercase">Live Cache Memory (MRU → LRU):</div>
+              <div className="text-[11px] font-bold text-[#2C3524] uppercase">{ui.liveCacheMem}</div>
               <div className="grid grid-cols-3 gap-2">
                 {lruCache.map((item, idx) => (
                   <div
@@ -5393,7 +5765,7 @@ export const StudentLearningView: React.FC = () => {
 
             {/* Event Log */}
             <div className="p-3 rounded-xl bg-slate-900 text-slate-300 font-mono text-[11px] space-y-1">
-              <div className="text-slate-500 font-bold uppercase text-[9px]">Operation Stream:</div>
+              <div className="text-slate-500 font-bold uppercase text-[9px]">{ui.opStream}</div>
               {cacheLog.map((log, i) => (
                 <div key={i} className="text-emerald-400">↳ {log}</div>
               ))}
@@ -5408,14 +5780,14 @@ export const StudentLearningView: React.FC = () => {
           <div className="p-4 rounded-2xl bg-white border border-[#E1D6AE] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h4 className="font-display font-semibold text-lg text-[#2C3524]">
-                Multilingual Technical & Mathematical Dictionary
+                {ui.dictTitle}
               </h4>
               <p className="text-xs text-[var(--text-muted)]">
-                Demystifying advanced engineering, mathematical, and algorithmic principles in your regional mother tongue.
+                {ui.dictDesc}
               </p>
             </div>
             <div className="text-xs font-bold px-3 py-1.5 rounded-xl bg-sagedeep text-pcream">
-              Active Dialect: {selectedLang}
+              {ui.activeDialect} {selectedLang}
             </div>
           </div>
 
