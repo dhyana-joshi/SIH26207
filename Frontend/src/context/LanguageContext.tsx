@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type SupportedLanguage = 'en' | 'gu' | 'hi';
+export type SupportedLanguage = 'en' | 'gu' | 'hi' | 'mr' | 'ta' | 'te' | 'bn';
 
 export interface LanguageOption {
   code: SupportedLanguage;
@@ -375,7 +375,7 @@ export const GLOBAL_PHRASES: Record<string, { gu: string; hi: string }> = {
   'Already have an account?': { gu: 'પહેલેથી જ ખાતું છે?', hi: 'पहले से खाता है?' },
 };
 
-const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
+const TRANSLATIONS: Record<'en' | 'gu' | 'hi', Record<string, string>> & Partial<Record<SupportedLanguage, Record<string, string>>> = {
   en: {
     // Nav
     'nav.brand': 'VidyaSarthi',
@@ -777,11 +777,14 @@ const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
 export const resolveTranslation = (
   textOrKey: string,
   targetLang: SupportedLanguage,
-  params?: Record<string, string | number>
+  fallbackOrParams?: string | Record<string, string | number>
 ): string => {
   if (!textOrKey) return '';
+  const fallback = typeof fallbackOrParams === 'string' ? fallbackOrParams : undefined;
+  const params = typeof fallbackOrParams === 'object' ? fallbackOrParams : undefined;
+
   if (targetLang === 'en') {
-    let result = TRANSLATIONS.en[textOrKey] || textOrKey;
+    let result = TRANSLATIONS.en[textOrKey] || fallback || textOrKey;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         result = result.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
@@ -791,8 +794,9 @@ export const resolveTranslation = (
   }
 
   // 1. Direct key match in TRANSLATIONS
-  if (TRANSLATIONS[targetLang] && TRANSLATIONS[targetLang][textOrKey]) {
-    let res = TRANSLATIONS[targetLang][textOrKey];
+  const targetDict = TRANSLATIONS[targetLang as 'en' | 'gu' | 'hi'];
+  if (targetDict && targetDict[textOrKey]) {
+    let res = targetDict[textOrKey];
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         res = res.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
@@ -801,44 +805,47 @@ export const resolveTranslation = (
     return res;
   }
 
-  // 2. Exact match in GLOBAL_PHRASES
-  if (GLOBAL_PHRASES[textOrKey] && GLOBAL_PHRASES[textOrKey][targetLang]) {
-    let res = GLOBAL_PHRASES[textOrKey][targetLang];
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        res = res.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
-      });
-    }
-    return res;
-  }
-
-  // 3. Normalized trimmed match in GLOBAL_PHRASES
+  const langKey = targetLang === 'gu' || targetLang === 'hi' ? targetLang : null;
   const trimmed = textOrKey.trim();
-  if (GLOBAL_PHRASES[trimmed] && GLOBAL_PHRASES[trimmed][targetLang]) {
-    return GLOBAL_PHRASES[trimmed][targetLang];
-  }
 
-  // 4. Case-insensitive lookup in DAYS, MONTHS, SUBJECTS, STATUSES
-  const lower = trimmed.toLowerCase();
-  if (DAYS_DICT[lower] && DAYS_DICT[lower][targetLang]) {
-    return DAYS_DICT[lower][targetLang];
-  }
-  if (MONTHS_DICT[lower] && MONTHS_DICT[lower][targetLang]) {
-    return MONTHS_DICT[lower][targetLang];
-  }
-  if (SUBJECTS_DICT[lower] && SUBJECTS_DICT[lower][targetLang]) {
-    return SUBJECTS_DICT[lower][targetLang];
-  }
-  if (STATUSES_DICT[lower] && STATUSES_DICT[lower][targetLang]) {
-    return STATUSES_DICT[lower][targetLang];
+  if (langKey) {
+    // 2. Exact match in GLOBAL_PHRASES
+    if (GLOBAL_PHRASES[textOrKey] && GLOBAL_PHRASES[textOrKey][langKey]) {
+      let res = GLOBAL_PHRASES[textOrKey][langKey];
+      if (params) {
+        Object.entries(params).forEach(([k, v]) => {
+          res = res.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+        });
+      }
+      return res;
+    }
+
+    // 3. Normalized trimmed match in GLOBAL_PHRASES
+    if (GLOBAL_PHRASES[trimmed] && GLOBAL_PHRASES[trimmed][langKey]) {
+      return GLOBAL_PHRASES[trimmed][langKey];
+    }
+
+    // 4. Case-insensitive lookup in DAYS, MONTHS, SUBJECTS, STATUSES
+    const lower = trimmed.toLowerCase();
+    if (DAYS_DICT[lower] && DAYS_DICT[lower][langKey]) {
+      return DAYS_DICT[lower][langKey];
+    }
+    if (MONTHS_DICT[lower] && MONTHS_DICT[lower][langKey]) {
+      return MONTHS_DICT[lower][langKey];
+    }
+    if (SUBJECTS_DICT[lower] && SUBJECTS_DICT[lower][langKey]) {
+      return SUBJECTS_DICT[lower][langKey];
+    }
+    if (STATUSES_DICT[lower] && STATUSES_DICT[lower][langKey]) {
+      return STATUSES_DICT[lower][langKey];
+    }
   }
 
   // 5. Check if it's an English translation key value
   for (const [key, val] of Object.entries(TRANSLATIONS.en)) {
     if (val === textOrKey || val.trim() === trimmed) {
-      if (TRANSLATIONS[targetLang]?.[key]) {
-        return TRANSLATIONS[targetLang][key];
-      }
+      const trans = TRANSLATIONS[targetLang as 'en' | 'gu' | 'hi']?.[key];
+      if (trans) return trans;
     }
   }
 
@@ -915,7 +922,7 @@ export const resolveTranslation = (
     }
   }
 
-  return textOrKey;
+  return fallback || textOrKey;
 };
 
 // =========================================================================
@@ -925,7 +932,7 @@ export const resolveTranslation = (
 interface LanguageContextType {
   language: SupportedLanguage;
   setLanguage: (lang: SupportedLanguage) => void;
-  t: (keyOrText: string, params?: Record<string, string | number>) => string;
+  t: (keyOrText: string, fallbackOrParams?: string | Record<string, string | number>) => string;
   tDay: (day: string) => string;
   tMonth: (month: string) => string;
   tSubject: (subject: string) => string;
@@ -956,32 +963,40 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const t = (keyOrText: string, params?: Record<string, string | number>): string => {
-    return resolveTranslation(keyOrText, language, params);
+  const t = (keyOrText: string, fallbackOrParams?: string | Record<string, string | number>): string => {
+    return resolveTranslation(keyOrText, language, fallbackOrParams);
   };
 
   const tDay = (day: string): string => {
     if (!day) return '';
+    if (language === 'en') return day;
     const lower = day.trim().toLowerCase();
-    return DAYS_DICT[lower]?.[language] || day;
+    return (DAYS_DICT[lower] && (language === 'gu' || language === 'hi')) ? DAYS_DICT[lower][language] : day;
   };
 
   const tMonth = (month: string): string => {
     if (!month) return '';
+    if (language === 'en') return month;
     const lower = month.trim().toLowerCase();
-    return MONTHS_DICT[lower]?.[language] || month;
+    return (MONTHS_DICT[lower] && (language === 'gu' || language === 'hi')) ? MONTHS_DICT[lower][language] : month;
   };
 
   const tSubject = (subject: string): string => {
     if (!subject) return '';
+    if (language === 'en') return subject;
     const lower = subject.trim().toLowerCase();
-    return SUBJECTS_DICT[lower]?.[language] || resolveTranslation(subject, language);
+    return (SUBJECTS_DICT[lower] && (language === 'gu' || language === 'hi'))
+      ? SUBJECTS_DICT[lower][language]
+      : resolveTranslation(subject, language);
   };
 
   const tStatus = (status: string): string => {
     if (!status) return '';
+    if (language === 'en') return status;
     const lower = status.trim().toLowerCase();
-    return STATUSES_DICT[lower]?.[language] || resolveTranslation(status, language);
+    return (STATUSES_DICT[lower] && (language === 'gu' || language === 'hi'))
+      ? STATUSES_DICT[lower][language]
+      : resolveTranslation(status, language);
   };
 
   const formatDate = (date: string | Date | number, options?: Intl.DateTimeFormatOptions): string => {

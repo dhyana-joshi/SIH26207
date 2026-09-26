@@ -1,7 +1,9 @@
 import React from 'react';
 import { Icon } from './Icon';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const VerifiedBadge: React.FC<{ small?: boolean }> = ({ small }) => {
+  const { t } = useLanguage();
   return (
     <span
       className={
@@ -11,7 +13,7 @@ export const VerifiedBadge: React.FC<{ small?: boolean }> = ({ small }) => {
       }
     >
       <Icon name="checkc" className={small ? "w-3 h-3" : "w-3.5 h-3.5"} />
-      Verified
+      {t('Verified', 'Verified')}
     </span>
   );
 };
@@ -83,14 +85,15 @@ export const ProgressBar: React.FC<{
 };
 
 export const SkillBar: React.FC<{ name: string; score: number; min: number }> = ({ name, score, min }) => {
+  const { t } = useLanguage();
   const gap = Math.max(0, min - score);
   const ok = score >= min;
   return (
     <div className="mb-3.5">
       <div className="flex items-baseline justify-between mb-1">
-        <span className="text-sm font-semibold">{name}</span>
+        <span className="text-sm font-semibold">{t(name, name)}</span>
         <span className="text-xs text-[var(--text-muted)]">
-          {score}/100 <span className="opacity-60">· needs {min}</span>
+          {score}/100 <span className="opacity-60">· {t('needs', 'needs')} {min}</span>
         </span>
       </div>
       <div className="relative w-full bg-black/10 rounded-full h-2.5 overflow-hidden">
@@ -100,7 +103,7 @@ export const SkillBar: React.FC<{ name: string; score: number; min: number }> = 
           style={{ width: score + "%" }}
         />
       </div>
-      {!ok && <div className="text-[11px] text-amber-700 mt-1">{gap} points to the required level</div>}
+      {!ok && <div className="text-[11px] text-amber-700 mt-1">{gap} {t('points to the required level', 'points to the required level')}</div>}
     </div>
   );
 };
@@ -196,10 +199,11 @@ export const SearchInput: React.FC<{
 };
 
 export const EmptyState: React.FC<{ text?: string; title?: string; desc?: string }> = ({ text, title, desc }) => {
+  const { t } = useLanguage();
   return (
     <div className="text-center py-10 text-sm text-[var(--text-muted)]">
-      {title && <div className="font-semibold text-base text-[#2C3524] mb-1">{title}</div>}
-      <div>{text || desc || 'No data found.'}</div>
+      {title && <div className="font-semibold text-base text-[#2C3524] mb-1">{t(title, title)}</div>}
+      <div>{t(text || desc || 'No data found.', text || desc || 'No data found.')}</div>
     </div>
   );
 };

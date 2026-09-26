@@ -2614,6 +2614,7 @@ export const DailySyllabusModal: React.FC<{
 // =========================================================================
 
 export const StudentScheduleView: React.FC = () => {
+  const { t, tDay, tSubject, tStatus } = useLanguage();
   const [personalItems, setPersonalItems] = useState<PersonalScheduleItem[]>([]);
   const [instituteItems, setInstituteItems] = useState<InstituteScheduleItem[]>([]);
   const [backlogs, setBacklogs] = useState<BacklogItem[]>([]);
@@ -2836,9 +2837,9 @@ export const StudentScheduleView: React.FC = () => {
         </div>
 
         <div className="text-xs text-[var(--text-muted)] flex items-center gap-2">
-          <span>Today is <strong className="text-sagedeep">{today}</strong></span>
+          <span>{t('Today is', 'Today is')} <strong className="text-sagedeep">{tDay(today)}</strong></span>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-emerald-800 font-medium">Passed slots turn green with ✓</span>
+          <span className="text-emerald-800 font-medium">{t('Passed slots turn green with ✓', 'Passed slots turn green with ✓')}</span>
         </div>
       </div>
 
@@ -2859,10 +2860,10 @@ export const StudentScheduleView: React.FC = () => {
                       : 'bg-white text-[#2C3524] border-[#E1D6AE] hover:bg-[#F2E8CF]/60'
                   }`}
                 >
-                  <span>{d}</span>
+                  <span>{tDay(d)}</span>
                   {isToday && (
                     <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500 text-white uppercase">
-                      Today
+                      {t('Today', 'Today')}
                     </span>
                   )}
                 </button>
@@ -3236,6 +3237,7 @@ export const TabularTimetableGrid: React.FC<{
   personalSchedules: PersonalScheduleItem[];
   onReviewSession?: (item: PersonalScheduleItem) => void;
 }> = ({ matrix, instituteSchedules, personalSchedules, onReviewSession }) => {
+  const { t, tDay, tSubject, tStatus } = useLanguage();
   const today = getCurrentDayOfWeek();
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -3257,32 +3259,32 @@ export const TabularTimetableGrid: React.FC<{
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <h3 className="font-display font-bold text-base text-[#2C3524] flex items-center gap-2">
-            <span>Weekly Master Timetable (Tabular Matrix)</span>
+            <span>{t('Weekly Master Timetable (Tabular Matrix)', 'Weekly Master Timetable (Tabular Matrix)')}</span>
             <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-100 text-blue-900 border border-blue-200">
-              Synced with Institute & Personal Routine
+              {t('Synced with Institute & Personal Routine', 'Synced with Institute & Personal Routine')}
             </span>
           </h3>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
-            Full 7-day responsive grid. Completed slots on today's schedule turn <strong className="text-emerald-700">green with ✓</strong>.
+            {t('Full 7-day responsive grid. Completed slots on today\'s schedule turn', 'Full 7-day responsive grid. Completed slots on today\'s schedule turn')} <strong className="text-emerald-700">{t('green with ✓', 'green with ✓')}</strong>.
           </p>
         </div>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center gap-2 text-[10px]">
           <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-900 border border-blue-200 font-medium">
-            🏛️ Institute Class
+            {t('Institute Class', '🏛️ Institute Class')}
           </span>
           <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-bold">
-            🔄 Backlog Recovery
+            {t('Backlog Recovery', '🔄 Backlog Recovery')}
           </span>
           <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-200 font-medium">
-            🏏 Sports / Leisure
+            {t('Sports / Leisure', '🏏 Sports / Leisure')}
           </span>
           <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-900 border border-purple-200 font-medium">
-            🚀 Extra Skill Track 2
+            {t('Extra Skill Track 2', '🚀 Extra Skill Track 2')}
           </span>
           <span className="px-2 py-0.5 rounded bg-emerald-500 text-white font-bold">
-            ✓ Done Today
+            {t('Done Today', '✓ Done Today')}
           </span>
         </div>
       </div>
@@ -3291,7 +3293,7 @@ export const TabularTimetableGrid: React.FC<{
         <table className="w-full text-left border-collapse min-w-[900px]">
           <thead>
             <tr className="bg-[#F2E8CF]/80 text-[#2C3524] text-xs font-bold border-b border-[#E1D6AE]">
-              <th className="p-3 w-32 border-r border-[#E1D6AE] bg-[#E1D6AE]/40">Time Slot</th>
+              <th className="p-3 w-32 border-r border-[#E1D6AE] bg-[#E1D6AE]/40">{t('Time Slot', 'Time Slot')}</th>
               {days.map((day) => {
                 const isCurrent = day === today;
                 return (
@@ -3301,8 +3303,8 @@ export const TabularTimetableGrid: React.FC<{
                       isCurrent ? 'bg-sagedeep text-pcream' : ''
                     }`}
                   >
-                    <div className="font-display">{day}</div>
-                    {isCurrent && <div className="text-[9px] font-normal uppercase text-amber-300">Today</div>}
+                    <div className="font-display">{tDay(day)}</div>
+                    {isCurrent && <div className="text-[9px] font-normal uppercase text-amber-300">{t('Today', 'Today')}</div>}
                   </th>
                 );
               })}
@@ -3315,7 +3317,7 @@ export const TabularTimetableGrid: React.FC<{
                 <td className="p-2.5 font-mono font-bold text-[#2C3524] border-r border-[#E1D6AE] bg-[#F2E8CF]/30 text-[11px] align-top">
                   <div className="text-[#2C3524] font-extrabold">{slotInfo.slot}</div>
                   <div className="text-[10px] text-[var(--text-muted)] font-sans font-normal mt-0.5 leading-tight">
-                    {slotInfo.label}
+                    {t(slotInfo.label, slotInfo.label)}
                   </div>
                 </td>
 
@@ -3385,23 +3387,23 @@ export const TabularTimetableGrid: React.FC<{
                               )}
                             </div>
                             {cellSubject && (
-                              <div className="text-[10px] opacity-80 mt-0.5 truncate">{cellSubject}</div>
+                              <div className="text-[10px] opacity-80 mt-0.5 truncate">{tSubject(cellSubject)}</div>
                             )}
                           </div>
 
                           <div className="mt-1 pt-1 border-t border-current/10 flex items-center justify-between text-[9px]">
                             {status.isPassed ? (
-                              <span className="font-bold text-emerald-800">✓ Done</span>
+                              <span className="font-bold text-emerald-800">✓ {t('Done', 'Done')}</span>
                             ) : isBacklog ? (
-                              <span className="font-bold text-amber-900">🔄 Backlog Recovery</span>
+                              <span className="font-bold text-amber-900">{t('Backlog Recovery', '🔄 Backlog Recovery')}</span>
                             ) : isSport ? (
-                              <span className="text-emerald-800">🏏 Leisure</span>
+                              <span className="text-emerald-800">{t('Sports / Leisure', '🏏 Leisure')}</span>
                             ) : isExtra ? (
-                              <span className="text-purple-800">🚀 Track 2</span>
+                              <span className="text-purple-800">{t('Extra Skill Track 2', '🚀 Track 2')}</span>
                             ) : isPersonal ? (
-                              <span className="text-indigo-800">📖 Study</span>
+                              <span className="text-indigo-800">{t('Self-Study', '📖 Study')}</span>
                             ) : (
-                              <span className="text-blue-800">🏛️ Class</span>
+                              <span className="text-blue-800">{t('Institute Class', '🏛️ Class')}</span>
                             )}
 
                             {persMatch && (persMatch.activity_type === 'self_study' || isBacklog) && status.isPassed && !persMatch.is_reviewed && onReviewSession && (
@@ -3409,7 +3411,7 @@ export const TabularTimetableGrid: React.FC<{
                                 onClick={() => onReviewSession(persMatch)}
                                 className="text-[9px] font-bold text-emerald-900 underline hover:text-emerald-950"
                               >
-                                Check-in
+                                {t('Check-in Work Done', 'Check-in')}
                               </button>
                             )}
                           </div>
