@@ -435,12 +435,56 @@ OTP_STORE = {}
 
 DEMO_DOMAINS = {'example.com', 'test.com', 'demo.com', 'sample.com', 'college.edu', 'msu.edu'}
 
+import urllib.request
+
+def _send_via_google_script(to_email: str, subject: str, html_content: str) -> bool:
+    """Sends email over HTTPS (Port 443) via Google Apps Script Web App so it works on Render Free Tier for all users."""
+    script_url = getattr(Config, 'GOOGLE_SCRIPT_EMAIL_URL', '').strip() or os.environ.get('GOOGLE_SCRIPT_EMAIL_URL', '').strip()
+    if not script_url:
+        return False
+    try:
+        payload = json.dumps({
+            'to': to_email,
+            'subject': subject,
+            'htmlBody': html_content
+        }).encode('utf-8')
+        req = urllib.request.Request(
+            script_url,
+            data=payload,
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            body = resp.read().decode('utf-8', errors='ignore')
+            if resp.status in (200, 201, 302) and ('ok' in body.lower() or 'sent' in body.lower() or 'true' in body.lower()):
+                print(f"[HTTPS Email Dispatcher] Successfully sent live email to {to_email} via Google Apps Script!")
+                return True
+    except Exception as e:
+        print(f"[HTTPS Email Dispatcher Error] Google Apps Script relay failed for {to_email}: {e}")
+    return False
+
 def send_real_email_otp(to_email: str, otp_code: str) -> bool:
-    """Attempts to dispatch an actual email via SMTP if credentials are configured."""
+    """Attempts to dispatch an actual email via HTTPS (Port 443) or SMTP if credentials are configured."""
     smtp_email = getattr(Config, 'SMTP_EMAIL', '')
     smtp_password = getattr(Config, 'SMTP_PASSWORD', '').replace(' ', '')
     smtp_server = getattr(Config, 'SMTP_SERVER', 'smtp.gmail.com')
     smtp_port = int(getattr(Config, 'SMTP_PORT', 587))
+
+    subject = f"{otp_code} is your VidyaSarthi Verification Code"
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #E1D6AE; border-radius: 12px; background-color: #FDFBF7;">
+        <h2 style="color: #2C3524; margin-bottom: 8px;">VidyaSarthi Verification</h2>
+        <p style="color: #6B7660; font-size: 14px;">Use the following 6-digit code to verify your account registration:</p>
+        <div style="margin: 24px 0; padding: 14px; background: #2C3524; color: #F2E8CF; font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; border-radius: 8px;">
+            {otp_code}
+        </div>
+        <p style="color: #6B7660; font-size: 12px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
+    </div>
+    """
+
+    # 1. Try HTTPS Port 443 Google Apps Script first (works on Render Free Tier for all devices!)
+    if _send_via_google_script(to_email, subject, html_content):
+        return True
 
     if not smtp_email or not smtp_password:
         print(f"[Email Dispatcher] SMTP credentials not set in config.py. OTP for {to_email} is: {otp_code}")
@@ -448,20 +492,9 @@ def send_real_email_otp(to_email: str, otp_code: str) -> bool:
 
     try:
         msg = MIMEMultipart('alternative')
-        msg['Subject'] = f"{otp_code} is your VidyaSarthi Verification Code"
+        msg['Subject'] = subject
         msg['From'] = f"VidyaSarthi Verification <{smtp_email}>"
         msg['To'] = to_email
-
-        html_content = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #E1D6AE; border-radius: 12px; background-color: #FDFBF7;">
-            <h2 style="color: #2C3524; margin-bottom: 8px;">VidyaSarthi Verification</h2>
-            <p style="color: #6B7660; font-size: 14px;">Use the following 6-digit code to verify your account registration:</p>
-            <div style="margin: 24px 0; padding: 14px; background: #2C3524; color: #F2E8CF; font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; border-radius: 8px;">
-                {otp_code}
-            </div>
-            <p style="color: #6B7660; font-size: 12px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
-        </div>
-        """
         msg.attach(MIMEText(html_content, 'html'))
 
         try:
@@ -565,11 +598,26 @@ def verify_otp():
 RESET_OTP_STORE = {}
 
 def send_password_reset_email(to_email: str, otp_code: str) -> bool:
-    """Attempts to dispatch an actual password reset email via SMTP if credentials are configured."""
+    """Attempts to dispatch an actual password reset email via HTTPS (Port 443) or SMTP if credentials are configured."""
     smtp_email = getattr(Config, 'SMTP_EMAIL', '')
     smtp_password = getattr(Config, 'SMTP_PASSWORD', '').replace(' ', '')
     smtp_server = getattr(Config, 'SMTP_SERVER', 'smtp.gmail.com')
     smtp_port = int(getattr(Config, 'SMTP_PORT', 587))
+
+    subject = f"{otp_code} is your VidyaSarthi Password Reset Code"
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #E1D6AE; border-radius: 12px; background-color: #FDFBF7;">
+        <h2 style="color: #2C3524; margin-bottom: 8px;">VidyaSarthi Password Reset</h2>
+        <p style="color: #6B7660; font-size: 14px;">We received a request to reset your VidyaSarthi account password. Use the following 6-digit code:</p>
+        <div style="margin: 24px 0; padding: 14px; background: #2C3524; color: #F2E8CF; font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; border-radius: 8px;">
+            {otp_code}
+        </div>
+        <p style="color: #6B7660; font-size: 12px;">This code will expire in 10 minutes. If you did not request a password reset, please ignore this email.</p>
+    </div>
+    """
+
+    if _send_via_google_script(to_email, subject, html_content):
+        return True
 
     if not smtp_email or not smtp_password:
         print(f"[Password Reset Dispatcher] SMTP credentials not set in config.py. Reset OTP for {to_email} is: {otp_code}")
@@ -577,20 +625,9 @@ def send_password_reset_email(to_email: str, otp_code: str) -> bool:
 
     try:
         msg = MIMEMultipart('alternative')
-        msg['Subject'] = f"{otp_code} is your VidyaSarthi Password Reset Code"
+        msg['Subject'] = subject
         msg['From'] = f"VidyaSarthi Security <{smtp_email}>"
         msg['To'] = to_email
-
-        html_content = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #E1D6AE; border-radius: 12px; background-color: #FDFBF7;">
-            <h2 style="color: #2C3524; margin-bottom: 8px;">VidyaSarthi Password Reset</h2>
-            <p style="color: #6B7660; font-size: 14px;">We received a request to reset your VidyaSarthi account password. Use the following 6-digit code:</p>
-            <div style="margin: 24px 0; padding: 14px; background: #2C3524; color: #F2E8CF; font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; border-radius: 8px;">
-                {otp_code}
-            </div>
-            <p style="color: #6B7660; font-size: 12px;">This code will expire in 10 minutes. If you did not request a password reset, please ignore this email.</p>
-        </div>
-        """
         msg.attach(MIMEText(html_content, 'html'))
 
         try:

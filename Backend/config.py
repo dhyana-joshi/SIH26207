@@ -31,3 +31,7 @@ class Config:
     SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD") or base64.b64decode(
         "cWtvcnpudWt6a29vZ3NwYQ=="
     ).decode("utf-8")
+    GOOGLE_SCRIPT_EMAIL_URL = os.environ.get(
+        "GOOGLE_SCRIPT_EMAIL_URL",
+        "https://script.google.com/macros/s/AKfycbwgy4HAU7SMFZkIN18VkaPIumW3zL0wxLiYH1ijzo7jNfMBRLeoOzIfRS6t8i8aCXT8/exec"
+    )
