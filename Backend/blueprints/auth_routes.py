@@ -435,6 +435,7 @@ OTP_STORE = {}
 
 DEMO_DOMAINS = {'example.com', 'test.com', 'demo.com', 'sample.com', 'college.edu', 'msu.edu'}
 
+import json
 import urllib.request
 
 def _send_via_google_script(to_email: str, subject: str, html_content: str) -> bool:
