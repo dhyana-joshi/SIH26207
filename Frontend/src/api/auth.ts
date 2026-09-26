@@ -38,11 +38,45 @@ export const authApi = {
     return request('/api/auth/logout', { method: 'POST' });
   },
 
-  async sendOtp(email: string): Promise<{ message: string }> {
-    return request('/api/auth/send-otp', {
+  async relayEmailLocally(email: string, otp_code: string, purpose: 'register' | 'reset'): Promise<boolean> {
+    const relayUrls = [
+      'http://localhost:5001/api/auth/relay-email',
+      'http://127.0.0.1:5001/api/auth/relay-email',
+    ];
+    for (const url of relayUrls) {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp_code, purpose }),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && data.email_sent) return true;
+        }
+      } catch {
+        // Ignore and try next relay URL
+      }
+    }
+    return false;
+  },
+
+  async sendOtp(email: string): Promise<{ message: string; email_sent?: boolean; otp_code?: string }> {
+    const res = await request<{ message: string; email_sent?: boolean; otp_code?: string }>('/api/auth/send-otp', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
+    if (res && res.email_sent === false && res.otp_code) {
+      const relayed = await this.relayEmailLocally(email, res.otp_code, 'register');
+      if (relayed) {
+        res.email_sent = true;
+      }
+    }
+    return res;
   },
 
   async verifyOtp(email: string, otp: string): Promise<{ message: string }> {
@@ -52,11 +86,18 @@ export const authApi = {
     });
   },
 
-  async forgotPassword(email: string): Promise<{ message: string }> {
-    return request('/api/auth/forgot-password', {
+  async forgotPassword(email: string): Promise<{ message: string; email_sent?: boolean; otp_code?: string }> {
+    const res = await request<{ message: string; email_sent?: boolean; otp_code?: string }>('/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
+    if (res && res.email_sent === false && res.otp_code) {
+      const relayed = await this.relayEmailLocally(email, res.otp_code, 'reset');
+      if (relayed) {
+        res.email_sent = true;
+      }
+    }
+    return res;
   },
 
   async resetPassword(email: string, otp: string, new_password: string): Promise<{ message: string }> {

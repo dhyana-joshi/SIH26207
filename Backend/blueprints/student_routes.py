@@ -232,16 +232,19 @@ def resolve_subject_questions(subject_name: str):
 
 def compute_realistic_progress_rate(cursor, student_id: int) -> float:
     """Calculates realistic syllabus completion velocity (%/day) grounded in actual student progress."""
-    cursor.execute("SELECT COUNT(DISTINCT log_date) FROM daily_syllabus_updates WHERE student_id = ?", (student_id,))
-    active_days = cursor.fetchone()[0] or 1
+    cursor.execute("SELECT COUNT(*) FROM daily_syllabus_updates WHERE student_id = ?", (student_id,))
+    daily_logs = cursor.fetchone()[0] or 0
     cursor.execute("SELECT SUM(completed_percentage), COUNT(*) FROM student_syllabus_progress WHERE student_id = ?", (student_id,))
     row = cursor.fetchone()
     if row and row[1] and row[1] > 0:
-        total_pct = row[0] or 0.0
-        avg_pct = total_pct / row[1]
-        daily_rate = round(min(4.5, max(0.8, (avg_pct / max(1, min(active_days, 25))))), 1)
+        total_pct = float(row[0] or 0.0)
+        avg_pct = total_pct / int(row[1])
+        if avg_pct <= 0.0 and daily_logs == 0:
+            daily_rate = 0.0
+        else:
+            daily_rate = round(min(2.5, max(0.2, (avg_pct / 45.0) + min(0.6, daily_logs * 0.08))), 1)
     else:
-        daily_rate = 1.4
+        daily_rate = 0.0
     cursor.execute("UPDATE students SET syllabus_progress_rate = ? WHERE id = ?", (daily_rate, student_id))
     return daily_rate
 
@@ -852,11 +855,9 @@ def get_syllabus_progress():
     )
     knowledge_gaps = [row_to_dict(r) for r in cursor.fetchall()]
 
-    cursor.execute("SELECT syllabus_progress_rate FROM students WHERE id = ?", (student_id,))
-    st_meta = cursor.fetchone()
+    prog_rate = compute_realistic_progress_rate(cursor, student_id)
+    conn.commit()
     conn.close()
-
-    prog_rate = st_meta['syllabus_progress_rate'] if (st_meta and st_meta['syllabus_progress_rate']) else 1.5
 
     return jsonify({
         'syllabus_progress': progress_rows,
@@ -1711,17 +1712,30 @@ def get_today_practice_test():
     cursor = conn.cursor()
 
     if not subject:
-        # Pick top weak subject
+        # Pick from student's actual enrolled subjects (prioritizing weak/lowest readiness first)
         cursor.execute(
             """
             SELECT subject_name FROM student_syllabus_progress
-            WHERE student_id = ? AND is_weak_subject = 1
+            WHERE student_id = ?
+            ORDER BY is_weak_subject DESC, exam_readiness_score ASC, id ASC
             LIMIT 1
             """,
             (student_id,)
         )
         row = cursor.fetchone()
-        subject = row['subject_name'] if row else 'Physics'
+        if row and row['subject_name']:
+            subject = row['subject_name']
+        else:
+            cursor.execute("SELECT academic_subjects, interested_subjects FROM students WHERE id = ?", (student_id,))
+            st_row = cursor.fetchone()
+            if st_row and st_row['academic_subjects']:
+                first_sub = [s.strip() for s in st_row['academic_subjects'].split(',') if s.strip()]
+                subject = first_sub[0] if first_sub else 'Data Structures & Algorithms'
+            elif st_row and st_row['interested_subjects']:
+                first_sub = [s.strip() for s in st_row['interested_subjects'].split(',') if s.strip()]
+                subject = first_sub[0] if first_sub else 'Data Structures & Algorithms'
+            else:
+                subject = 'Data Structures & Algorithms'
 
     conn.close()
 

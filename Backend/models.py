@@ -531,36 +531,42 @@ def calculate_student_potential_score(cursor, student_id):
 
     # 1. Consistency & Routine Adherence (max 25.0)
     cursor.execute("SELECT count(*) FROM daily_syllabus_updates WHERE student_id = ?", (student_id,))
-    daily_count = cursor.fetchone()[0]
+    daily_count = cursor.fetchone()[0] or 0
     cursor.execute("SELECT count(*) FROM student_personal_schedules WHERE student_id = ? AND is_completed = 1", (student_id,))
-    completed_sched = cursor.fetchone()[0]
-    consistency_pts = min(25.0, (daily_count * 2.5) + (completed_sched * 1.5))
+    completed_sched = cursor.fetchone()[0] or 0
+    consistency_pts = min(25.0, round((daily_count * 2.0) + (completed_sched * 1.0), 1))
 
     # 2. Practice & Assessment Performance (max 30.0)
     cursor.execute("SELECT AVG(score) FROM practice_tests WHERE student_id = ?", (student_id,))
     res_pr = cursor.fetchone()[0]
-    if res_pr is not None:
-        practice_pts = min(30.0, float(res_pr) * 0.30)
+    cursor.execute("SELECT AVG(score) FROM diagnostic_tests WHERE student_id = ?", (student_id,))
+    res_dg = cursor.fetchone()[0]
+    if res_pr is not None and res_dg is not None:
+        combined_test_avg = (float(res_pr) * 0.6) + (float(res_dg) * 0.4)
+        practice_pts = min(30.0, round(combined_test_avg * 0.30, 1))
+    elif res_pr is not None:
+        practice_pts = min(30.0, round(float(res_pr) * 0.30, 1))
+    elif res_dg is not None:
+        practice_pts = min(30.0, round(float(res_dg) * 0.30, 1))
     else:
-        cursor.execute("SELECT AVG(score) FROM diagnostic_tests WHERE student_id = ?", (student_id,))
-        res_dg = cursor.fetchone()[0]
-        practice_pts = min(30.0, float(res_dg) * 0.25) if res_dg is not None else 15.0
+        practice_pts = 0.0
 
-    # 3. Growth Velocity / Distance Traveled from Baseline (max 25.0)
-    cursor.execute("SELECT AVG(exam_readiness_score) FROM student_syllabus_progress WHERE student_id = ?", (student_id,))
-    res_rd = cursor.fetchone()[0]
-    curr_readiness = float(res_rd) if res_rd is not None else 0.0
-    
+    # 3. Growth Velocity / Syllabus & Competency Progression (max 25.0)
+    cursor.execute("SELECT AVG(completed_percentage), AVG(exam_readiness_score) FROM student_syllabus_progress WHERE student_id = ?", (student_id,))
+    prog_row = cursor.fetchone()
+    avg_completed_pct = float(prog_row[0]) if (prog_row and prog_row[0] is not None) else 0.0
+    curr_readiness = float(prog_row[1]) if (prog_row and prog_row[1] is not None) else 0.0
+
     kl = (st_row['knowledge_level'] or 'Intermediate').lower()
     baseline_score = 20.0 if kl == 'beginner' else 35.0 if kl == 'intermediate' else 50.0
-    growth_delta = max(0.0, curr_readiness - baseline_score)
-    growth_pts = min(25.0, max(0.0, 5.0 + (growth_delta * 0.4))) if curr_readiness > 0 else 0.0
+    growth_delta = max(0.0, round(curr_readiness - baseline_score, 1)) if curr_readiness > 0 else 0.0
+    growth_pts = min(25.0, round((avg_completed_pct * 0.15) + (growth_delta * 0.25), 1))
 
     # 4. Extra Skill Learning (max 20.0)
     cursor.execute("SELECT SUM(duration_minutes) FROM extra_learning_logs WHERE student_id = ?", (student_id,))
     res_mins = cursor.fetchone()[0]
     total_mins = float(res_mins) if res_mins is not None else 0.0
-    skill_pts = min(20.0, total_mins / 15.0)
+    skill_pts = min(20.0, round(total_mins / 15.0, 1))
 
     total_score = min(100.0, round(consistency_pts + practice_pts + growth_pts + skill_pts, 1))
 

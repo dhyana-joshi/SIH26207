@@ -1425,30 +1425,139 @@ const TopicDeepDiveModal: React.FC<{
 
   if (!topic) return null;
 
-  const sampleQuiz = [
-    {
-      q: `What is the core significance of ${topic.title} in engineering and scientific computation?`,
-      options: {
-        A: 'It establishes mathematical convergence, boundary conditions, and continuous modeling',
-        B: 'It replaces all algorithmic computation with hardcoded heuristics',
-        C: 'It only operates on static data formats',
-        D: 'It prevents any numerical optimization'
-      },
-      ans: 'A',
-      explanation: 'Foundational principles provide the rigorous boundary conditions and derivatives required for reliable computer simulations, AI models, and real-world engineering.'
-    },
-    {
-      q: `How does "${topic.key_concept || 'the governing equation'}" translate to practical implementation?`,
-      options: {
-        A: 'It maps rates of change, spatial coordinate transformation, or state transitions into computable steps',
-        B: 'It can only be solved manually on paper without computers',
-        C: 'It has no connection to modern software systems',
-        D: 'It ignores energy and resource conservation laws'
-      },
-      ans: 'A',
-      explanation: 'The analytical mathematical formulation directly translates into GPU shaders, gradient backpropagation, RLC circuit transient analysis, or database query trees.'
+  const getSubjectSpecificMilestoneQuiz = (subj: string, topicTitle: string, keyConcept?: string) => {
+    const s = (subj || '').toLowerCase();
+    if (s.includes('dsa') || s.includes('data structure') || s.includes('algorithm')) {
+      return [
+        {
+          q: `In Data Structures & Algorithms, what is the primary algorithmic goal when working with "${topicTitle}"?`,
+          options: {
+            A: 'Optimizing time and auxiliary space complexity (e.g. achieving O(log n) or O(1) operations)',
+            B: 'Storing all data in unindexed plain text files',
+            C: 'Increasing worst-case asymptotic bounds to O(n!)',
+            D: 'Bypassing memory pointers altogether'
+          },
+          ans: 'A',
+          explanation: `${topicTitle} is designed to maintain structural invariants that guarantee fast lookup, insertion, or traversal complexity.`
+        },
+        {
+          q: `Which property best characterizes the invariant "${keyConcept || 'T(n) = O(n log n)'}" in ${subj}?`,
+          options: {
+            A: 'It bounds the growth rate of operations as input size N scales',
+            B: 'It only applies when N = 1',
+            C: 'It depends on monitor refresh rate',
+            D: 'It eliminates recursion stack frames'
+          },
+          ans: 'A',
+          explanation: 'Asymptotic invariants and recurrence relations mathematically bound how runtime and memory scale with input size N.'
+        }
+      ];
     }
-  ];
+    if (s.includes('operating system') || s === 'os') {
+      return [
+        {
+          q: `In Operating Systems, how does the kernel manage "${topicTitle}" efficiently?`,
+          options: {
+            A: 'Through hardware-assisted context switching, page tables, or synchronization primitives',
+            B: 'By letting user-mode applications overwrite kernel memory directly',
+            C: 'By disabling all CPU interrupts permanently',
+            D: 'By running only a single thread without virtual memory'
+          },
+          ans: 'A',
+          explanation: `The OS kernel enforces protection, fair scheduling, and virtual memory mapping for ${topicTitle}.`
+        },
+        {
+          q: `What system metric is directly improved by optimizing "${topicTitle}"?`,
+          options: {
+            A: 'CPU throughput, turnaround time, and memory utilization without deadlock',
+            B: 'HTML stylesheet rendering speed',
+            C: 'SQL table column count',
+            D: 'Static compiler syntax checking'
+          },
+          ans: 'A',
+          explanation: 'OS primitives minimize context-switch overhead, prevent thrashing/deadlocks, and reduce response latency.'
+        }
+      ];
+    }
+    if (s.includes('dbms') || s.includes('database') || s.includes('sql')) {
+      return [
+        {
+          q: `In Database Management Systems, why is "${topicTitle}" critical for data integrity and performance?`,
+          options: {
+            A: 'It guarantees ACID properties, eliminates redundancy, or accelerates disk block lookups via B+ Trees',
+            B: 'It stores all relational tables inside browser cookies',
+            C: 'It disables concurrent transactions',
+            D: 'It removes primary and foreign keys'
+          },
+          ans: 'A',
+          explanation: `${topicTitle} ensures consistent, durable, and high-throughput query execution in relational and distributed databases.`
+        },
+        {
+          q: `How does the database engine apply "${keyConcept || 'ACID & B+ Tree Indexing'}" during query execution?`,
+          options: {
+            A: 'By optimizing query execution plans and maintaining write-ahead logs (WAL)',
+            B: 'By scanning every disk sector sequentially on every read',
+            C: 'By dropping unindexed tables',
+            D: 'By ignoring lock isolation levels'
+          },
+          ans: 'A',
+          explanation: 'Cost-based query optimizers and transaction managers rely on indexing and isolation protocols for safe concurrent access.'
+        }
+      ];
+    }
+    if (s.includes('web') || s.includes('react') || s.includes('frontend') || s.includes('fullstack')) {
+      return [
+        {
+          q: `In Modern Web Development, how does "${topicTitle}" improve application architecture?`,
+          options: {
+            A: 'It ensures predictable state management, non-blocking I/O, and responsive rendering',
+            B: 'It forces a full browser page reload on every keystroke',
+            C: 'It blocks the JavaScript main thread indefinitely',
+            D: 'It disables HTTPS encryption'
+          },
+          ans: 'A',
+          explanation: `${topicTitle} is essential for building scalable, interactive, and secure full-stack web applications.`
+        },
+        {
+          q: `What is the practical impact of "${keyConcept || 'Component State & Event Loop'}" in production web apps?`,
+          options: {
+            A: 'Minimizes unnecessary DOM mutations and handles concurrent API requests cleanly',
+            B: 'Replaces TCP/IP with local file transfers',
+            C: 'Prevents CSS flexbox layout calculation',
+            D: 'Executes SQL queries directly inside HTML tags'
+          },
+          ans: 'A',
+          explanation: 'Declarative rendering and asynchronous event handling keep web interfaces fast and responsive.'
+        }
+      ];
+    }
+    return [
+      {
+        q: `What is the core significance of "${topicTitle}" in ${subjectName}?`,
+        options: {
+          A: 'It establishes rigorous analytical principles, boundary conditions, and predictive modeling',
+          B: 'It replaces systematic analysis with arbitrary guesswork',
+          C: 'It only applies to static, non-changing systems',
+          D: 'It prevents quantitative verification'
+        },
+        ans: 'A',
+        explanation: `In ${subjectName}, ${topicTitle} provides the foundational laws and structure required for solving complex problems.`
+      },
+      {
+        q: `How does "${keyConcept || 'the governing formulation'}" translate to practical problem solving in ${subjectName}?`,
+        options: {
+          A: 'It maps system variables, rates of change, or structural transitions into solvable steps',
+          B: 'It has no connection to real-world applications',
+          C: 'It ignores conservation and invariance laws',
+          D: 'It cannot be verified experimentally or computationally'
+        },
+        ans: 'A',
+        explanation: 'The governing formulation directly connects theoretical concepts to real-world analysis and implementation.'
+      }
+    ];
+  };
+
+  const sampleQuiz = getSubjectSpecificMilestoneQuiz(subjectName, topic.title, topic.key_concept);
 
   const handleSelect = (qIdx: number, optKey: string) => {
     if (quizSubmitted) return;
@@ -4364,6 +4473,19 @@ export const PracticeTestModal: React.FC<{
   onComplete: () => void;
 }> = ({ initialSubject, onClose, onComplete }) => {
   const [subject, setSubject] = useState(initialSubject || 'Data Structures & Algorithms');
+  const [availableSubjects, setAvailableSubjects] = useState<string[]>([
+    'Data Structures & Algorithms',
+    'Operating Systems',
+    'Database Management Systems',
+    'Web Development',
+    'Artificial Intelligence',
+    'Python Programming',
+    'Computer Science',
+    'Mathematics',
+    'Physics',
+    'Chemistry',
+    'Biology',
+  ]);
   const [questions, setQuestions] = useState<PracticeTestQuestion[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -4372,9 +4494,31 @@ export const PracticeTestModal: React.FC<{
   const [result, setResult] = useState<any | null>(null);
 
   useEffect(() => {
+    studentApi.getProfile().then((res) => {
+      if (res?.profile) {
+        const enrolled = [
+          ...(res.profile.academic_subjects ? res.profile.academic_subjects.split(',') : []),
+          ...(res.profile.extra_subjects ? res.profile.extra_subjects.split(',') : []),
+        ]
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (enrolled.length > 0) {
+          setAvailableSubjects((prev) => Array.from(new Set([...enrolled, ...prev])));
+          if (!initialSubject) {
+            setSubject(enrolled[0]);
+          }
+        }
+      }
+    }).catch(() => {});
+  }, [initialSubject]);
+
+  useEffect(() => {
     let isMounted = true;
     const fetchQ = async () => {
       setLoading(true);
+      setCurrentIdx(0);
+      setAnswers({});
+      setResult(null);
       try {
         const res = await studentApi.getTodayPracticeTest(subject);
         if (isMounted && res?.questions) {
@@ -4432,7 +4576,7 @@ export const PracticeTestModal: React.FC<{
               {result.score}%
             </div>
             <p className="text-xs text-[var(--text-muted)] mt-1">
-              Accuracy: {result.accuracy}% • Updated Practice Average: {result.new_practice_average}%
+              Accuracy: {result.accuracy} • Updated Practice Average: {result.new_practice_average}
             </p>
           </div>
 
@@ -4462,7 +4606,22 @@ export const PracticeTestModal: React.FC<{
 
   return (
     <Modal title={`Targeted Practice: ${subject}`} onClose={onClose}>
-      <div className="space-y-5 p-2">
+      <div className="space-y-4 p-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#E1D6AE]">
+          <label className="text-xs font-semibold text-[#2C3524]">Quiz Subject:</label>
+          <select
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="p-1.5 rounded-lg border border-[#E1D6AE] bg-white text-xs font-semibold text-[#2C3524]"
+          >
+            {availableSubjects.map((subj) => (
+              <option key={subj} value={subj}>
+                {subj}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>Question {currentIdx + 1} of {questions.length}</span>
           <Tag tone="sage">{q?.topic || 'Core Concept'}</Tag>
@@ -5487,40 +5646,65 @@ export const StudentLearningView: React.FC = () => {
             </div>
 
             {/* SVG Coordinate Grid */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-              <svg width={340} height={260} viewBox="0 0 340 260">
-                {/* Grid Lines */}
-                {[-2, -1, 1, 2].map((g) => (
-                  <React.Fragment key={g}>
-                    <line x1={originX + g * scale} y1={10} x2={originX + g * scale} y2={250} stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1={10} y1={originY + g * scale} x2={330} y2={originY + g * scale} stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
-                  </React.Fragment>
-                ))}
+            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center overflow-hidden">
+              <svg
+                viewBox="0 0 340 260"
+                className="w-full h-auto max-h-[260px] select-none cursor-crosshair overflow-hidden"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const svgX = ((e.clientX - rect.left) / rect.width) * 340;
+                  const svgY = ((e.clientY - rect.top) / rect.height) * 260;
+                  const nx = Math.max(-2, Math.min(2, parseFloat(((svgX - originX) / scale).toFixed(2))));
+                  const ny = Math.max(-2, Math.min(2, parseFloat(((originY - svgY) / scale).toFixed(2))));
+                  if (e.shiftKey) {
+                    setMatB(nx);
+                    setMatD(ny);
+                  } else {
+                    setMatA(nx);
+                    setMatC(ny);
+                  }
+                }}
+              >
+                <defs>
+                  <clipPath id="matrixPlotClip">
+                    <rect x="10" y="10" width="320" height="240" rx="8" />
+                  </clipPath>
+                </defs>
 
-                {/* Main Axes */}
-                <line x1={10} y1={originY} x2={330} y2={originY} stroke="#64748b" strokeWidth="1.5" />
-                <line x1={originX} y1={10} x2={originX} y2={250} stroke="#64748b" strokeWidth="1.5" />
+                <g clipPath="url(#matrixPlotClip)">
+                  {/* Grid Lines */}
+                  {[-3, -2, -1, 1, 2, 3].map((g) => (
+                    <React.Fragment key={g}>
+                      <line x1={originX + g * scale} y1={10} x2={originX + g * scale} y2={250} stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1={10} y1={originY + g * scale} x2={330} y2={originY + g * scale} stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
+                    </React.Fragment>
+                  ))}
 
-                {/* Transformed Unit Square (Parallelogram) */}
-                <polygon
-                  points={`${originX},${originY} ${iX},${iY} ${cornerX},${cornerY} ${jX},${jY}`}
-                  fill="#10b981"
-                  fillOpacity="0.25"
-                  stroke="#10b981"
-                  strokeWidth="1.5"
-                />
+                  {/* Main Axes */}
+                  <line x1={10} y1={originY} x2={330} y2={originY} stroke="#64748b" strokeWidth="1.5" />
+                  <line x1={originX} y1={10} x2={originX} y2={250} stroke="#64748b" strokeWidth="1.5" />
 
-                {/* Transformed Basis Vector î' (Red) */}
-                <line x1={originX} y1={originY} x2={iX} y2={iY} stroke="#f43f5e" strokeWidth="3" markerEnd="url(#arrow-red)" />
-                <circle cx={iX} cy={iY} r="4" fill="#f43f5e" />
+                  {/* Transformed Unit Square (Parallelogram) */}
+                  <polygon
+                    points={`${originX},${originY} ${iX},${iY} ${cornerX},${cornerY} ${jX},${jY}`}
+                    fill="#10b981"
+                    fillOpacity="0.25"
+                    stroke="#10b981"
+                    strokeWidth="1.5"
+                  />
 
-                {/* Transformed Basis Vector ĵ' (Blue) */}
-                <line x1={originX} y1={originY} x2={jX} y2={jY} stroke="#38bdf8" strokeWidth="3" markerEnd="url(#arrow-blue)" />
-                <circle cx={jX} cy={jY} r="4" fill="#38bdf8" />
+                  {/* Transformed Basis Vector î' (Red) */}
+                  <line x1={originX} y1={originY} x2={iX} y2={iY} stroke="#f43f5e" strokeWidth="3" />
+                  <circle cx={iX} cy={iY} r="5" fill="#f43f5e" stroke="#ffffff" strokeWidth="1.5" />
+
+                  {/* Transformed Basis Vector ĵ' (Blue) */}
+                  <line x1={originX} y1={originY} x2={jX} y2={jY} stroke="#38bdf8" strokeWidth="3" />
+                  <circle cx={jX} cy={jY} r="5" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
+                </g>
               </svg>
-              <div className="w-full flex justify-between text-[11px] font-mono text-slate-400 mt-1">
-                <span className="text-rose-400 font-bold">î' = [{matA.toFixed(2)}, {matC.toFixed(2)}]ᵀ</span>
-                <span className="text-sky-400 font-bold">ĵ' = [{matB.toFixed(2)}, {matD.toFixed(2)}]ᵀ</span>
+              <div className="w-full flex flex-wrap justify-between gap-2 text-[11px] font-mono text-slate-400 mt-1">
+                <span className="text-rose-400 font-bold">î' = [{matA.toFixed(2)}, {matC.toFixed(2)}]ᵀ (Click grid)</span>
+                <span className="text-sky-400 font-bold">ĵ' = [{matB.toFixed(2)}, {matD.toFixed(2)}]ᵀ (Shift+Click)</span>
                 <span className="text-emerald-400 font-bold">Area = |det(A)| = {Math.abs(det).toFixed(2)}</span>
               </div>
             </div>
@@ -5645,7 +5829,7 @@ export const StudentLearningView: React.FC = () => {
       {activeTab === 'algorithms' && (
         <div className="grid md:grid-cols-2 gap-6">
           {/* BST Sandbox */}
-          <Card className="p-6 space-y-4">
+          <Card className="p-6 space-y-4 overflow-hidden">
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-display font-semibold text-base text-[#2C3524]">
@@ -5661,35 +5845,112 @@ export const StudentLearningView: React.FC = () => {
             <div className="flex gap-2">
               <input
                 type="number"
-                placeholder="Enter integer..."
+                placeholder="Enter integer (e.g. 45)..."
                 value={newBstVal}
                 onChange={(e) => setNewBstVal(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleAddBstNode();
+                }}
                 className="flex-1 p-2 rounded-lg border border-[#E1D6AE] bg-white text-xs text-[#2C3524]"
               />
               <Button size="sm" variant="primary" onClick={handleAddBstNode}>
                 {ui.insertNode}
               </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setBstNodes([20, 30, 40, 50, 60, 70, 80])}
+              >
+                Reset
+              </Button>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 text-white font-mono text-xs flex flex-col items-center justify-center space-y-3 shadow-inner">
-              <div className="px-3.5 py-1.5 rounded-full bg-emerald-600 font-bold shadow-md">[Root: 50]</div>
-              <div className="text-slate-500">/ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \</div>
-              <div className="flex gap-10">
-                <div className="px-3 py-1 rounded-full bg-blue-600 font-bold">[Left: 30]</div>
-                <div className="px-3 py-1 rounded-full bg-blue-600 font-bold">[Right: 70]</div>
-              </div>
-              <div className="text-slate-500">/ &nbsp; \ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; / &nbsp; \</div>
-              <div className="flex gap-3">
-                <div className="px-2 py-0.5 rounded bg-purple-600 text-[10px]">[20]</div>
-                <div className="px-2 py-0.5 rounded bg-purple-600 text-[10px]">[40]</div>
-                <div className="px-2 py-0.5 rounded bg-purple-600 text-[10px]">[60]</div>
-                <div className="px-2 py-0.5 rounded bg-purple-600 text-[10px]">[80]</div>
-              </div>
+            <div className="p-3 rounded-2xl bg-slate-900 text-white font-mono text-xs flex flex-col items-center justify-center shadow-inner overflow-hidden">
+              {(() => {
+                type TreeNode = { val: number; x: number; y: number; depth: number; left?: TreeNode; right?: TreeNode };
+                const buildBalanced = (arr: number[], depth: number, xMinBound: number, xMaxBound: number): TreeNode | undefined => {
+                  if (!arr.length || depth > 3) return undefined;
+                  const mid = Math.floor(arr.length / 2);
+                  const x = (xMinBound + xMaxBound) / 2;
+                  const y = 28 + depth * 52;
+                  return {
+                    val: arr[mid],
+                    x,
+                    y,
+                    depth,
+                    left: buildBalanced(arr.slice(0, mid), depth + 1, xMinBound, x),
+                    right: buildBalanced(arr.slice(mid + 1), depth + 1, x, xMaxBound)
+                  };
+                };
+                const root = buildBalanced(bstNodes, 0, 16, 344);
+                const edges: { x1: number; y1: number; x2: number; y2: number }[] = [];
+                const nodes: TreeNode[] = [];
+                const traverse = (n?: TreeNode) => {
+                  if (!n) return;
+                  nodes.push(n);
+                  if (n.left) {
+                    edges.push({ x1: n.x, y1: n.y, x2: n.left.x, y2: n.left.y });
+                    traverse(n.left);
+                  }
+                  if (n.right) {
+                    edges.push({ x1: n.x, y1: n.y, x2: n.right.x, y2: n.right.y });
+                    traverse(n.right);
+                  }
+                };
+                traverse(root);
+
+                return (
+                  <>
+                    <svg viewBox="0 0 360 205" className="w-full h-auto max-h-[205px] select-none overflow-hidden">
+                      {edges.map((e, idx) => (
+                        <line
+                          key={idx}
+                          x1={e.x1}
+                          y1={e.y1}
+                          x2={e.x2}
+                          y2={e.y2}
+                          stroke="#475569"
+                          strokeWidth="2"
+                        />
+                      ))}
+                      {nodes.map((n) => {
+                        const fill = n.depth === 0 ? '#059669' : n.depth === 1 ? '#2563eb' : '#7c3aed';
+                        return (
+                          <g
+                            key={n.val}
+                            className="cursor-pointer hover:opacity-85 transition-opacity"
+                            onClick={() => {
+                              if (bstNodes.length > 1) {
+                                setBstNodes(bstNodes.filter((v) => v !== n.val));
+                              }
+                            }}
+                          >
+                            <circle cx={n.x} cy={n.y} r="15" fill={fill} stroke="#e2e8f0" strokeWidth="1.5" />
+                            <text
+                              x={n.x}
+                              y={n.y + 4}
+                              textAnchor="middle"
+                              fill="#ffffff"
+                              fontSize="10"
+                              fontWeight="bold"
+                            >
+                              {n.val}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+                    <div className="text-[10px] text-slate-400 mt-1">
+                      Click any node to remove it • Enter a number above to insert into BST
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             <div className="p-3 rounded-xl bg-[#F2E8CF]/50 border border-[#E1D6AE] text-xs">
               <span className="font-semibold text-[#2C3524]">{ui.inOrderLabel}</span>
-              <div className="font-mono text-xs text-sagedeep font-bold mt-1">
+              <div className="font-mono text-xs text-sagedeep font-bold mt-1 break-all">
                 [{bstNodes.join(', ')}]
               </div>
             </div>

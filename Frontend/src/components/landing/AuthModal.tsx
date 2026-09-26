@@ -36,6 +36,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
   // OTP Verification State
   const [otpStep, setOtpStep] = useState(false);
   const [otpCode, setOtpCode] = useState('');
+  const [fallbackOtp, setFallbackOtp] = useState<string | null>(null);
 
   // Forgot / Reset Password State
   const [authView, setAuthView] = useState<'login' | 'register' | 'forgot'>('login');
@@ -80,6 +81,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
     setSuccessMsg(null);
     setOtpStep(false);
     setOtpCode('');
+    setFallbackOtp(null);
     setForgotStep('request');
     setResetOtp('');
     setNewPassword('');
@@ -91,10 +93,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setFallbackOtp(null);
     setLoading(true);
 
     try {
-      await authApi.sendOtp(email);
+      const res = await authApi.sendOtp(email);
+      if (res && res.email_sent === false && res.otp_code) {
+        setFallbackOtp(res.otp_code);
+      }
       setOtpStep(true);
     } catch (err: any) {
       setError(err.message || 'Failed to send verification code. Please check your email.');
@@ -175,10 +181,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
+    setFallbackOtp(null);
     setLoading(true);
 
     try {
-      await authApi.forgotPassword(resetEmail);
+      const res = await authApi.forgotPassword(resetEmail);
+      if (res && res.email_sent === false && res.otp_code) {
+        setFallbackOtp(res.otp_code);
+      }
       setForgotStep('verify');
       setSuccessMsg(`Verification code sent to ${resetEmail}!`);
     } catch (err: any) {
@@ -568,6 +578,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
             <p className="text-[11px] text-[var(--text-muted)] mt-1.5 bg-black/5 p-2 rounded-lg">
               📬 Please check your inbox or spam/junk folder and enter the verification code below.
             </p>
+            {fallbackOtp && (
+              <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-2">
+                <span>
+                  Verification Code: <strong className="font-mono tracking-wider text-sm">{fallbackOtp}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setOtpCode(fallbackOtp)}
+                  className="px-2.5 py-1 rounded-lg bg-amber-800 text-white text-[11px] font-semibold hover:bg-amber-900"
+                >
+                  Auto-fill
+                </button>
+              </div>
+            )}
           </div>
 
           <div>
@@ -653,6 +677,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, setMode, on
                   Change
                 </button>
               </div>
+
+              {fallbackOtp && (
+                <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-2">
+                  <span>
+                    Reset Code: <strong className="font-mono tracking-wider text-sm">{fallbackOtp}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setResetOtp(fallbackOtp)}
+                    className="px-2.5 py-1 rounded-lg bg-amber-800 text-white text-[11px] font-semibold hover:bg-amber-900"
+                  >
+                    Auto-fill
+                  </button>
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-semibold text-[var(--text-muted)]">6-Digit Verification Code</label>

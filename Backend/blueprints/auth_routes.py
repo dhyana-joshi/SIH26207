@@ -465,7 +465,7 @@ def send_real_email_otp(to_email: str, otp_code: str) -> bool:
         msg.attach(MIMEText(html_content, 'html'))
 
         try:
-            server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=3)
             server.ehlo()
             server.starttls()
             server.ehlo()
@@ -473,7 +473,7 @@ def send_real_email_otp(to_email: str, otp_code: str) -> bool:
             server.sendmail(smtp_email, to_email, msg.as_string())
             server.quit()
         except Exception:
-            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
+            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=3)
             server_ssl.login(smtp_email, smtp_password)
             server_ssl.sendmail(smtp_email, to_email, msg.as_string())
             server_ssl.quit()
@@ -483,9 +483,39 @@ def send_real_email_otp(to_email: str, otp_code: str) -> bool:
         print(f"[Email Dispatcher Error] Could not send live email to {to_email}: {e}")
         return False
 
+@auth_bp.route('/relay-email', methods=['POST', 'OPTIONS'])
+def relay_email():
+    """Allows a cloud-hosted frontend (where outbound SMTP ports 587/465 are blocked by Render Free Tier)
+    to relay the OTP email through the local backend SMTP dispatcher."""
+    if request.method == 'OPTIONS':
+        resp = jsonify({'status': 'ok'})
+        resp.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        resp.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        resp.headers['Access-Control-Allow-Private-Network'] = 'true'
+        return resp, 200
+
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    otp_code = data.get('otp_code', '').strip()
+    purpose = data.get('purpose', 'register').strip()
+
+    if not email or not otp_code:
+        return jsonify({'error': 'email and otp_code are required', 'email_sent': False}), 400
+
+    if purpose == 'reset':
+        sent = send_password_reset_email(email, otp_code)
+    else:
+        sent = send_real_email_otp(email, otp_code)
+
+    resp = jsonify({'email_sent': sent, 'message': 'Email relayed' if sent else 'Relay failed'})
+    resp.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+    resp.headers['Access-Control-Allow-Private-Network'] = 'true'
+    return resp, 200
+
 @auth_bp.route('/send-otp', methods=['POST'])
 def send_otp():
-    """Generates a 6-digit OTP. Sends real email for actual inboxes, and demo assist for demo domains."""
+    """Generates a 6-digit OTP. Sends real email for actual inboxes, and provides fallback when outbound SMTP is blocked."""
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if not email or '@' not in email:
@@ -502,12 +532,14 @@ def send_otp():
     email_dispatched = send_real_email_otp(email, otp_code)
 
     if not email_dispatched:
-        print(f"[OTP LOCAL CONSOLE] Live email to {email} could not be sent (configure SMTP_EMAIL and SMTP_PASSWORD in Backend/.env). Development OTP: {otp_code}")
+        print(f"[OTP LOCAL CONSOLE] Live email to {email} could not be sent (outbound SMTP blocked or unconfigured). OTP: {otp_code}")
 
     response_payload = {
         'message': f'Verification OTP sent to {email}! Please check your inbox and spam folder.',
         'email_sent': email_dispatched
     }
+    if not email_dispatched:
+        response_payload['otp_code'] = otp_code
 
     return jsonify(response_payload), 200
 @auth_bp.route('/verify-otp', methods=['POST'])
@@ -562,7 +594,7 @@ def send_password_reset_email(to_email: str, otp_code: str) -> bool:
         msg.attach(MIMEText(html_content, 'html'))
 
         try:
-            server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=3)
             server.ehlo()
             server.starttls()
             server.ehlo()
@@ -570,7 +602,7 @@ def send_password_reset_email(to_email: str, otp_code: str) -> bool:
             server.sendmail(smtp_email, to_email, msg.as_string())
             server.quit()
         except Exception:
-            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=10)
+            server_ssl = smtplib.SMTP_SSL(smtp_server, 465, timeout=3)
             server_ssl.login(smtp_email, smtp_password)
             server_ssl.sendmail(smtp_email, to_email, msg.as_string())
             server_ssl.quit()
@@ -614,18 +646,18 @@ def forgot_password():
         'table': stakeholder_table
     }
 
-    domain = email.split('@')[-1]
-    is_demo = domain in DEMO_DOMAINS or 'demo' in email or 'test' in email
-
     # Send real email via SMTP if configured
     email_dispatched = send_password_reset_email(email, otp_code)
 
     if not email_dispatched:
-        print(f"[RESET OTP LOCAL CONSOLE] Live reset email to {email} could not be sent (configure SMTP_EMAIL and SMTP_PASSWORD in Backend/.env). Development OTP: {otp_code}")
+        print(f"[RESET OTP LOCAL CONSOLE] Live reset email to {email} could not be sent (outbound SMTP blocked or unconfigured). OTP: {otp_code}")
 
     payload = {
-        'message': f'Password reset verification code sent to {email}! Please check your inbox and spam folder.'
+        'message': f'Password reset verification code sent to {email}! Please check your inbox and spam folder.',
+        'email_sent': email_dispatched
     }
+    if not email_dispatched:
+        payload['otp_code'] = otp_code
 
     return jsonify(payload), 200
 

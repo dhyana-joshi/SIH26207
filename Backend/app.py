@@ -18,12 +18,24 @@ def create_app():
     CORS(app, supports_credentials=True, origins=[
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:5001",
+        "http://localhost:5000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
+        "http://127.0.0.1:5001",
+        "http://127.0.0.1:5000",
         "http://localhost:5174",
-        "http://192.168.29.194:5173"
+        "http://192.168.29.194:5173",
+        "https://vidyasarthi.onrender.com"
     ])
+
+    @app.after_request
+    def add_pna_headers(response):
+        from flask import request as req
+        if req.headers.get('Access-Control-Request-Private-Network') == 'true':
+            response.headers['Access-Control-Allow-Private-Network'] = 'true'
+        return response
 
     # Initialize the SQLite tables and ensure default seed data exists
     init_db()
