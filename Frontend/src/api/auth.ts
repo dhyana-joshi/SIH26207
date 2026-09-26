@@ -54,14 +54,13 @@ export const authApi = {
           <p style="color: #6B7660; font-size: 12px;">This code will expire in 10 minutes.</p>
         </div>
       `;
-      const resp = await fetch(googleScriptUrl, {
+      await fetch(googleScriptUrl, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ to: email, subject, htmlBody }),
       });
-      if (resp.ok) {
-        return true;
-      }
+      return true;
     } catch {
       // Fall through to local relay
     }
