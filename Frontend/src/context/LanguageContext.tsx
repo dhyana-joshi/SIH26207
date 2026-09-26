@@ -1018,8 +1018,10 @@ const TRANSLATIONS: Record<'en' | 'gu' | 'hi', Record<string, string>> & Partial
 
 // Build reverse lookup map from any translated string back to canonical English string
 const REVERSE_TO_EN_MAP = new Map<string, string>();
+const EN_VALUE_TO_KEY_MAP = new Map<string, string>();
 (() => {
   Object.entries(TRANSLATIONS.en).forEach(([key, enVal]) => {
+    EN_VALUE_TO_KEY_MAP.set(enVal.trim(), key);
     const guVal = TRANSLATIONS.gu?.[key];
     const hiVal = TRANSLATIONS.hi?.[key];
     if (guVal) REVERSE_TO_EN_MAP.set(guVal.trim(), enVal);
@@ -1125,12 +1127,11 @@ export const resolveTranslation = (
     }
   }
 
-  // 5. Check if it's an English translation key value
-  for (const [key, val] of Object.entries(TRANSLATIONS.en)) {
-    if (val === textOrKey || val.trim() === trimmed) {
-      const trans = TRANSLATIONS[targetLang as 'en' | 'gu' | 'hi']?.[key];
-      if (trans) return trans;
-    }
+  // 5. O(1) lookup if it's an English translation key value
+  const matchedKey = EN_VALUE_TO_KEY_MAP.get(trimmed);
+  if (matchedKey) {
+    const trans = TRANSLATIONS[targetLang as 'en' | 'gu' | 'hi']?.[matchedKey];
+    if (trans) return trans;
   }
 
   // 6. Template replacements for common dynamic UI patterns
@@ -1351,7 +1352,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           canonicalEn = reverseLookup ? (leadingWs + reverseLookup + trailingWs) : text;
           originalTextMap.set(textNode, canonicalEn);
         } else {
-          // Ensure canonicalEn itself is normalized if it was previously saved while in non-English
           const savedTrimmed = canonicalEn.trim();
           const reverseLookup = REVERSE_TO_EN_MAP.get(savedTrimmed);
           if (reverseLookup) {
@@ -1391,7 +1391,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const ph = el.getAttribute('placeholder') || '';
           if (currentLang === 'en') {
             const saved = originalAttrMap.get(el);
-            if (saved && saved.placeholder) {
+            if (saved && saved.placeholder && ph !== saved.placeholder) {
               el.setAttribute('placeholder', saved.placeholder);
             }
           } else {
@@ -1404,7 +1404,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               saved.placeholder = REVERSE_TO_EN_MAP.get(ph.trim()) || ph;
             }
             const translated = resolveTranslation(saved.placeholder.trim(), currentLang);
-            el.setAttribute('placeholder', translated);
+            if (ph !== translated) {
+              el.setAttribute('placeholder', translated);
+            }
           }
         }
 
@@ -1413,13 +1415,22 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const title = el.getAttribute('title') || '';
           if (currentLang === 'en') {
             const saved = originalAttrMap.get(el);
-            if (saved && saved.title) el.setAttribute('title', saved.title);
+            if (saved && saved.title && title !== saved.title) {
+              el.setAttribute('title', saved.title);
+            }
           } else {
             let saved = originalAttrMap.get(el);
-            if (!saved) { saved = {}; originalAttrMap.set(el, saved); }
-            if (!saved.title) saved.title = REVERSE_TO_EN_MAP.get(title.trim()) || title;
+            if (!saved) {
+              saved = {};
+              originalAttrMap.set(el, saved);
+            }
+            if (!saved.title) {
+              saved.title = REVERSE_TO_EN_MAP.get(title.trim()) || title;
+            }
             const translated = resolveTranslation(saved.title.trim(), currentLang);
-            el.setAttribute('title', translated);
+            if (title !== translated) {
+              el.setAttribute('title', translated);
+            }
           }
         }
 
@@ -1431,46 +1442,50 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     let isProcessing = false;
+    let observer: MutationObserver | null = null;
+
     const runTranslation = () => {
       if (isProcessing) return;
       isProcessing = true;
       try {
         processNode(document.body);
       } finally {
+        if (observer) observer.takeRecords();
         isProcessing = false;
       }
     };
 
-    runTranslation();
-
-    const observer = new MutationObserver((mutations) => {
+    observer = new MutationObserver((mutations) => {
       if (isProcessing) return;
       isProcessing = true;
       try {
-        mutations.forEach((mutation) => {
+        for (let i = 0; i < mutations.length; i++) {
+          const mutation = mutations[i];
           if (mutation.type === 'childList') {
             mutation.addedNodes.forEach((node) => processNode(node));
           } else if (mutation.type === 'characterData' && mutation.target) {
-            processNode(mutation.target);
-          } else if (mutation.type === 'attributes' && mutation.target) {
-            processNode(mutation.target);
+            const lastVal = lastAppliedTextMap.get(mutation.target);
+            if (mutation.target.nodeValue !== lastVal) {
+              processNode(mutation.target);
+            }
           }
-        });
+        }
       } finally {
+        if (observer) observer.takeRecords();
         isProcessing = false;
       }
     });
+
+    runTranslation();
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
       characterData: true,
-      attributes: true,
-      attributeFilter: ['placeholder', 'title', 'aria-label'],
     });
 
     return () => {
-      observer.disconnect();
+      if (observer) observer.disconnect();
     };
   }, [language]);
 
