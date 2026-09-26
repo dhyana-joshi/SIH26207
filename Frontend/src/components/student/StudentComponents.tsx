@@ -368,11 +368,11 @@ export const UpcomingExamSyllabusGauge: React.FC<{
   const cx = 90;
   const cy = 76;
   const arcLen = Math.PI * r;
-  const fillOffset = arcLen * (1 - cur / 100);
-
-  const tgtAngle = Math.PI * (1 - tgt / 100);
-  const tgtX = cx + (r + 4) * Math.cos(tgtAngle);
-  const tgtY = cy - (r + 4) * Math.sin(tgtAngle);
+  // Subtract half stroke-width (5.5) when 0 < cur < 100 so the round stroke cap lands right at the needle tip
+  const fillOffset = Math.min(
+    arcLen,
+    Math.max(0, arcLen * (1 - cur / 100) + (cur > 0 && cur < 100 ? 5.5 : 0))
+  );
 
   const isTargetAchieved = cur >= tgt;
   const toneColor = isTargetAchieved
@@ -429,13 +429,10 @@ export const UpcomingExamSyllabusGauge: React.FC<{
               className="transition-all duration-1000 ease-out"
             />
 
-            {/* Target Marker Pin */}
-            <circle cx={tgtX} cy={tgtY} r="4" fill="#313851" stroke="#FFFFFF" strokeWidth="1.5" />
-
             {/* Sharp Precision Pointer Needle */}
             <g transform={`rotate(${(cur / 100) * 180 - 90}, ${cx}, ${cy})`}>
               <polygon
-                points={`${cx - 2.5},${cy} ${cx},${cy - 59} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
+                points={`${cx - 2.5},${cy} ${cx},${cy - 62} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
                 fill="#2C3524"
               />
               <circle cx={cx} cy={cy} r="5" fill="#2C3524" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -443,7 +440,6 @@ export const UpcomingExamSyllabusGauge: React.FC<{
             </g>
 
             <text x="24" y="90" fontSize="9" fill="#556248" fontWeight="bold">0%</text>
-            <text x={tgtX - 10} y={tgtY - 8} fontSize="8" fill="#313851" fontWeight="bold">🎯{tgt}%</text>
             <text x="146" y="90" fontSize="9" fill="#556248" fontWeight="bold">100%</text>
           </svg>
 
@@ -458,9 +454,9 @@ export const UpcomingExamSyllabusGauge: React.FC<{
 
         {/* Exam Pacing Details */}
         <div className="space-y-2 text-xs flex-1 w-full bg-pcream/40 p-3 rounded-xl border border-[#E1D6AE]">
-          <div className="flex items-center justify-between font-semibold text-[#2C3524]">
-            <span className="truncate max-w-[170px]" title={examTitle}>📅 {examTitle}</span>
-            <span className="text-[11px] font-mono text-sagedeep font-bold">
+          <div className="flex items-center justify-between gap-2 font-semibold text-[#2C3524]">
+            <span className="truncate" title={examTitle}>📅 {examTitle}</span>
+            <span className="text-[11px] font-mono text-sagedeep font-bold shrink-0 whitespace-nowrap">
               {daysRemaining}d left
             </span>
           </div>
@@ -470,7 +466,7 @@ export const UpcomingExamSyllabusGauge: React.FC<{
           <div>
             <div className="flex justify-between text-[11px] font-semibold text-[#2C3524] mb-1">
               <span>Exam Threshold Pacing</span>
-              <span>{cur}% / {tgt}% ({fractionOfTarget}%)</span>
+              <span className="shrink-0 whitespace-nowrap">{cur}% / {tgt}% ({fractionOfTarget}%)</span>
             </div>
             <div className="w-full bg-[#E1D6AE] h-2 rounded-full overflow-hidden">
               <div
@@ -510,15 +506,10 @@ export const SkillGrowthVelocityGauge: React.FC<{
   const cy = 76;
   const arcLen = Math.PI * r;
 
-  const baseAngle = Math.PI * (1 - base / 100);
-  const baseX = cx + (r + 4) * Math.cos(baseAngle);
-  const baseY = cy - (r + 4) * Math.sin(baseAngle);
-
-  const curAngle = Math.PI * (1 - cur / 100);
-  const curX = cx + (r + 4) * Math.cos(curAngle);
-  const curY = cy - (r + 4) * Math.sin(curAngle);
-
-  const strokeOffset = arcLen * (1 - cur / 100);
+  const strokeOffset = Math.min(
+    arcLen,
+    Math.max(0, arcLen * (1 - cur / 100) + (cur > 0 && cur < 100 ? 5.5 : 0))
+  );
 
   const defaultMilestones = [
     { label: 'Intake Baseline', pct: 22, achieved: true },
@@ -544,7 +535,7 @@ export const SkillGrowthVelocityGauge: React.FC<{
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-4 my-2">
-        {/* Semi-circular Radial SVG Gauge with Start & Current Markers */}
+        {/* Semi-circular Radial SVG Gauge with Pointer Needle */}
         <div className="relative w-48 h-28 shrink-0 flex items-end justify-center">
           <svg viewBox="0 0 180 95" className="w-full h-full overflow-visible">
             <defs>
@@ -576,16 +567,10 @@ export const SkillGrowthVelocityGauge: React.FC<{
               className="transition-all duration-1000 ease-out"
             />
 
-            {/* Baseline Intake Flag Pin */}
-            <circle cx={baseX} cy={baseY} r="4.5" fill="#E76F51" stroke="#FFFFFF" strokeWidth="1.5" />
-
-            {/* Current Competency Tip */}
-            <circle cx={curX} cy={curY} r="4.5" fill="#2A9D8F" stroke="#FFFFFF" strokeWidth="1.5" />
-
             {/* Sharp Precision Pointer Needle */}
             <g transform={`rotate(${(cur / 100) * 180 - 90}, ${cx}, ${cy})`}>
               <polygon
-                points={`${cx - 2.5},${cy} ${cx},${cy - 59} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
+                points={`${cx - 2.5},${cy} ${cx},${cy - 62} ${cx + 2.5},${cy} ${cx},${cy + 7}`}
                 fill="#2C3524"
               />
               <circle cx={cx} cy={cy} r="5" fill="#2C3524" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -593,7 +578,6 @@ export const SkillGrowthVelocityGauge: React.FC<{
             </g>
 
             <text x="24" y="90" fontSize="9" fill="#556248" fontWeight="bold">0%</text>
-            <text x={baseX - 10} y={baseY - 7} fontSize="8" fill="#E76F51" fontWeight="bold">🏁{base}%</text>
             <text x="146" y="90" fontSize="9" fill="#556248" fontWeight="bold">100%</text>
           </svg>
 

@@ -297,36 +297,38 @@ export const PortalShell: React.FC<PortalShellProps> = ({
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex min-h-[calc(100vh-4rem)] items-stretch">
         {/* sidebar */}
         <aside
           className={
             (mobileNav ? "translate-x-0" : "-translate-x-full") +
-            " lg:translate-x-0 fixed lg:sticky top-16 lg:top-16 left-0 z-30 w-64 h-[calc(100vh-4rem)] bg-white border-r border-[#E1D6AE] p-3 transition-transform duration-200 overflow-y-auto"
+            " lg:translate-x-0 fixed lg:static top-16 left-0 z-30 w-64 shrink-0 h-[calc(100vh-4rem)] lg:h-auto lg:min-h-[calc(100vh-4rem)] lg:self-stretch bg-white border-r border-[#E1D6AE] transition-transform duration-200 overflow-y-auto lg:overflow-visible"
           }
         >
-          <div className="px-2 py-3 mb-1">
-            <div className="text-xs font-semibold text-[#6B7660] uppercase tracking-wide">{getPortalLabel()}</div>
-            {subtitle && <div className="text-[11px] text-[#8B9480] mt-0.5">{subtitle}</div>}
+          <div className="lg:sticky lg:top-16 p-3 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
+            <div className="px-2 py-3 mb-1">
+              <div className="text-xs font-semibold text-[#6B7660] uppercase tracking-wide">{getPortalLabel()}</div>
+              {subtitle && <div className="text-[11px] text-[#8B9480] mt-0.5">{subtitle}</div>}
+            </div>
+            <nav className="space-y-1">
+              {tabs.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => {
+                    setActive(t.key);
+                    setMobileNav(false);
+                  }}
+                  className={
+                    "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition focus-ring " +
+                    (active === t.key ? "bg-sage/25 text-[#2C3524] font-semibold" : "text-[#556248] hover:bg-pcream")
+                  }
+                >
+                  <Icon name={t.icon} className="w-4 h-4 shrink-0" />
+                  {getTabLabel(t)}
+                </button>
+              ))}
+            </nav>
           </div>
-          <nav className="space-y-1">
-            {tabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => {
-                  setActive(t.key);
-                  setMobileNav(false);
-                }}
-                className={
-                  "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition focus-ring " +
-                  (active === t.key ? "bg-sage/25 text-[#2C3524] font-semibold" : "text-[#556248] hover:bg-pcream")
-                }
-              >
-                <Icon name={t.icon} className="w-4 h-4 shrink-0" />
-                {getTabLabel(t)}
-              </button>
-            ))}
-          </nav>
         </aside>
         {mobileNav && <div className="fixed inset-0 bg-black/30 z-20 lg:hidden" onClick={() => setMobileNav(false)} />}
 
