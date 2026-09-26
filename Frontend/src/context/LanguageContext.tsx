@@ -142,6 +142,14 @@ export const GLOBAL_PHRASES: Record<string, { gu: string; hi: string }> = {
   'No new notifications right now.': { gu: 'હાલમાં કોઈ નવી સૂચનાઓ નથી.', hi: 'अभी कोई नई सूचनाएं नहीं हैं।' },
   'Syncing…': { gu: 'સિંક થઈ રહ્યું છે…', hi: 'सिंक हो रहा है…' },
 
+  // Flow Diagram Steps
+  'Curriculum': { gu: 'અભ્યાસક્રમ', hi: 'पाठ्यक्रम' },
+  'Extra Skills': { gu: 'વધારાના કૌશલ્યો', hi: 'अतिरिक्त कौशल' },
+  'Assess': { gu: 'મૂલ્યાંકન', hi: 'मूल्यांकन' },
+  'Practice': { gu: 'પ્રેક્ટિસ', hi: 'अभ्यास' },
+  'Research': { gu: 'સંશોધન', hi: 'शोध' },
+  'Excel': { gu: 'શ્રેષ્ઠતા', hi: 'उत्कृष्टता' },
+
   // Portal Tabs
   'Dashboard Overview': { gu: 'ડેશબોર્ડ ઓવરવ્યૂ', hi: 'डैशबोर्ड अवलोकन' },
   'Overview': { gu: 'ઓવરવ્યૂ', hi: 'अवलोकन' },

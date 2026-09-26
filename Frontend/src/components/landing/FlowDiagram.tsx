@@ -1,44 +1,64 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface FlowDiagramProps {
   inverted?: boolean;
 }
 
 export const FlowDiagram: React.FC<FlowDiagramProps> = ({ inverted = false }) => {
-  const steps = ['Curriculum', 'Extra Skills', 'Assess', 'Practice', 'Research', 'Excel'];
+  const { t } = useLanguage();
+  const steps = [
+    { label: 'Curriculum', num: 1 },
+    { label: 'Extra Skills', num: 2 },
+    { label: 'Assess', num: 3 },
+    { label: 'Practice', num: 4 },
+    { label: 'Research', num: 5 },
+    { label: 'Excel', num: 6 },
+  ];
+
   return (
-    <div className="w-full max-w-full overflow-hidden px-1 py-1">
-      <div className="flex items-center justify-between w-full max-w-full">
-        {steps.map((s, i) => (
-          <Fragment key={s}>
-            <div className="flex flex-col items-center shrink-0">
+    <div className="w-full select-none py-1.5">
+      {/* Upper Track: Connecting Line + 6 Centered Symmetrical Circles */}
+      <div className="relative w-full">
+        {/* Continuous Horizontal Line passing exactly through circle centers */}
+        <div
+          className={`absolute top-1/2 left-[8.33%] right-[8.33%] h-[2px] -translate-y-1/2 z-0 ${
+            inverted
+              ? 'bg-gradient-to-r from-white/20 via-white/45 to-white/20'
+              : 'bg-gradient-to-r from-deepblue/20 via-deepblue/40 to-deepblue/20'
+          }`}
+        />
+
+        {/* 6 Circles symmetrically spaced in a 6-column grid */}
+        <div className="grid grid-cols-6 w-full relative z-10">
+          {steps.map((step) => (
+            <div key={step.num} className="flex justify-center items-center">
               <div
-                className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-full border flex items-center justify-center font-display text-xs sm:text-sm md:text-base transition-transform ${
+                className={`w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full border-2 flex items-center justify-center font-display font-bold text-xs sm:text-sm md:text-base transition-all duration-150 shadow-md ${
                   inverted
-                    ? 'bg-white/10 border-white/25 text-cream shadow-inner'
-                    : 'bg-mutedsage/40 border-deepblue/15 text-deepblue'
+                    ? 'bg-[#293046] border-white/40 text-cream hover:scale-105 hover:border-white'
+                    : 'bg-white border-deepblue/25 text-deepblue hover:scale-105 hover:border-deepblue'
                 }`}
               >
-                {i + 1}
+                {step.num}
               </div>
-              <span
-                className={`text-[9px] sm:text-[10px] md:text-xs font-semibold mt-1 text-center leading-tight max-w-[58px] ${
-                  inverted ? 'text-cream/80' : 'text-deepblue/80'
-                }`}
-              >
-                {s}
-              </span>
             </div>
-            {i < steps.length - 1 && (
-              <div
-                className={`flex-1 min-w-[4px] sm:min-w-[8px] max-w-[28px] h-[2px] -mt-3 sm:-mt-3.5 md:-mt-4 shrink transition-opacity ${
-                  inverted
-                    ? 'bg-gradient-to-r from-white/30 via-white/40 to-white/30'
-                    : 'bg-gradient-to-r from-deepblue/25 via-deepblue/40 to-deepblue/25'
-                }`}
-              />
-            )}
-          </Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Lower Track: Step Labels below each circle */}
+      <div className="grid grid-cols-6 w-full mt-2.5">
+        {steps.map((step) => (
+          <div key={step.num} className="text-center px-0.5 sm:px-1">
+            <span
+              className={`block text-[10px] sm:text-[11px] md:text-xs font-semibold leading-tight break-words ${
+                inverted ? 'text-cream/90' : 'text-deepblue/90'
+              }`}
+            >
+              {t(step.label, step.label)}
+            </span>
+          </div>
         ))}
       </div>
     </div>
@@ -46,6 +66,7 @@ export const FlowDiagram: React.FC<FlowDiagramProps> = ({ inverted = false }) =>
 };
 
 export const EcosystemFlow: React.FC = () => {
+  const { t } = useLanguage();
   const rows = [
     {
       who: 'Student',
@@ -67,7 +88,9 @@ export const EcosystemFlow: React.FC = () => {
           key={r.who}
           className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 rounded-xl border border-deepblue/12 bg-white/60 px-3.5 py-3 sm:px-4 sm:py-3.5 break-words w-full shadow-sm"
         >
-          <div className="sm:w-36 shrink-0 font-display font-semibold text-deepblue text-sm sm:text-base">{r.who}</div>
+          <div className="sm:w-36 shrink-0 font-display font-semibold text-deepblue text-sm sm:text-base">
+            {t(r.who, r.who)}
+          </div>
           <div className="text-xs sm:text-sm text-deepblue/75 leading-relaxed">{r.flow}</div>
         </div>
       ))}
