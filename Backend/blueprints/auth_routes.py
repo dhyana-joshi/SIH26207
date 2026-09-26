@@ -437,6 +437,11 @@ DEMO_DOMAINS = {'example.com', 'test.com', 'demo.com', 'sample.com', 'college.ed
 
 import json
 import urllib.request
+import urllib.error
+
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 def _send_via_google_script(to_email: str, subject: str, html_content: str) -> bool:
     """Sends email over HTTPS (Port 443) via Google Apps Script Web App so it works on Render Free Tier for all users."""
@@ -452,14 +457,24 @@ def _send_via_google_script(to_email: str, subject: str, html_content: str) -> b
         req = urllib.request.Request(
             script_url,
             data=payload,
-            headers={'Content-Type': 'application/json'},
+            headers={'Content-Type': 'text/plain;charset=utf-8'},
             method='POST'
         )
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            body = resp.read().decode('utf-8', errors='ignore')
-            if resp.status in (200, 201, 302) and ('ok' in body.lower() or 'sent' in body.lower() or 'true' in body.lower()):
-                print(f"[HTTPS Email Dispatcher] Successfully sent live email to {to_email} via Google Apps Script!")
+        opener = urllib.request.build_opener(_NoRedirectHandler)
+        try:
+            with opener.open(req, timeout=10) as resp:
+                body = resp.read().decode('utf-8', errors='ignore')
+                if resp.status in (200, 201) and ('ok' in body.lower() or 'sent' in body.lower()):
+                    print(f"[HTTPS Email Dispatcher] Successfully sent live email to {to_email} via Google Apps Script!")
+                    return True
+        except urllib.error.HTTPError as http_err:
+            # Google Apps Script executes doPost(e) and returns 302 Found -> script.googleusercontent.com/macros/echo
+            loc = http_err.headers.get('Location', '')
+            if http_err.code in (301, 302, 303, 307, 308) and 'script.googleusercontent.com' in loc:
+                print(f"[HTTPS Email Dispatcher] Successfully sent live email to {to_email} via Google Apps Script (302 echo)!")
                 return True
+            else:
+                print(f"[HTTPS Email Dispatcher Error] HTTP {http_err.code} (Location: {loc})")
     except Exception as e:
         print(f"[HTTPS Email Dispatcher Error] Google Apps Script relay failed for {to_email}: {e}")
     return False
